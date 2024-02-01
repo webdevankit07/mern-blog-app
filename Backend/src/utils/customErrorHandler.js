@@ -15,6 +15,4 @@ export const ApiError = (next, condition, statusCode, message) => {
     }
 };
 
-export const error = new customError(404, "some error message");
-
 export default customError;
