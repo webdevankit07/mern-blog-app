@@ -3,12 +3,15 @@ import { Link, useLocation } from 'react-router-dom';
 
 // React icons...
 import { AiOutlineSearch } from 'react-icons/ai';
-import { FaMoon } from 'react-icons/fa';
-import { useAppSelector } from '../../store/storeHooks';
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
+import { toggleTheme } from '../../store/features/theme/themeSlice';
 
 const Header = () => {
+    const { theme } = useAppSelector((state) => state.theme);
     const { currentUser } = useAppSelector((state) => state.user);
     const path = useLocation().pathname;
+    const dispatch = useAppDispatch();
 
     return (
         <Navbar className='border-b-2'>
@@ -30,8 +33,13 @@ const Header = () => {
                 <AiOutlineSearch />
             </Button>
             <div className='flex gap-2 md:order-2'>
-                <Button className='hidden w-12 h-10 sm:inline' color='gray' pill>
-                    <FaMoon />
+                <Button
+                    className='hidden w-12 h-10 sm:inline'
+                    color='gray'
+                    pill
+                    onClick={() => dispatch(toggleTheme())}
+                >
+                    {theme === 'dark' ? <FaMoon /> : <FaSun />}
                 </Button>
                 {currentUser ? (
                     <Dropdown
