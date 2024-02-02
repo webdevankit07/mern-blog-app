@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // React Icons...
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
@@ -24,6 +24,7 @@ const Signup = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>();
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+    const navigate = useNavigate();
     const {
         register,
         formState: { errors, isSubmitSuccessful },
@@ -46,6 +47,7 @@ const Signup = () => {
             // setError(undefined);
             await axios.post('/api/v1/auth/register', formData);
             setIsLoading(false);
+            navigate('/sign-in');
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
                 setError(error.response?.data.message);
@@ -58,7 +60,7 @@ const Signup = () => {
     };
 
     return (
-        <div className='mt-20'>
+        <div className='my-20'>
             <div className='flex flex-col max-w-5xl p-3 mx-auto md:flex-row md:items-center'>
                 {/* Left */}
                 <div className='flex-1'>
