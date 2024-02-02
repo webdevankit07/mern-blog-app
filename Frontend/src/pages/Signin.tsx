@@ -3,9 +3,11 @@ import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import { signInFailure, signInStart, signInSuccess } from '../store/features/user/userSlice';
 
 // React Icons...
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
+import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 
 type SignInFormData = {
     fullName: string;
@@ -21,10 +23,10 @@ interface ValidationError {
 }
 
 const Signin = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | undefined>();
+    const { loading, error } = useAppSelector((state) => state.user);
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const {
         register,
         formState: { errors, isSubmitSuccessful },
@@ -41,20 +43,18 @@ const Signin = () => {
 
     //Form Submit.....*;
     const handleFormSubmit = async (formData: SignInFormData) => {
-        setIsLoading(true);
         try {
-            // setError(undefined);
-            await axios.post('/api/v1/auth/login', formData);
-            setIsLoading(false);
+            dispatch(signInStart());
+            const { data } = await axios.post('/api/v1/auth/login', formData);
+            dispatch(signInSuccess(data.data.user));
             navigate('/');
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                setError(error.response?.data.message);
+                dispatch(signInFailure(error.response?.data.message));
             } else {
                 const err = error as Error;
-                setError(err.message);
+                dispatch(signInFailure(err.message));
             }
-            setIsLoading(false);
         }
     };
 
@@ -122,8 +122,8 @@ const Signin = () => {
                             />
                             <p className='h-2 px-3 pt-1 pb-3 text-sm text-red-500'>{errors.password?.message}</p>
                         </div>
-                        <Button gradientDuoTone={'purpleToPink'} type='submit' disabled={isLoading}>
-                            {isLoading ? (
+                        <Button gradientDuoTone={'purpleToPink'} type='submit' disabled={loading}>
+                            {loading ? (
                                 <>
                                     <Spinner size={'sm'} />
                                     <span className='pl-3'>Loading...</span>
