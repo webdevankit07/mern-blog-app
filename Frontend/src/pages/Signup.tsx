@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 // React Icons...
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
+import OAuth from '../components/OAuth';
 
 type SignUpFormData = {
     fullName: string;
@@ -175,6 +176,7 @@ const Signup = () => {
                                 'Sign Up'
                             )}
                         </Button>
+                        <OAuth />
                     </form>
                     <div className='flex gap-1 mt-5 text-sm'>
                         <span>Have an account?</span>

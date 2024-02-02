@@ -8,6 +8,7 @@ import { signInFailure, signInStart, signInSuccess } from '../store/features/use
 // React Icons...
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
+import OAuth from '../components/OAuth';
 
 type SignInFormData = {
     fullName: string;
@@ -132,6 +133,7 @@ const Signin = () => {
                                 'Sign In'
                             )}
                         </Button>
+                        <OAuth />
                     </form>
                     <div className='flex gap-1 mt-5 text-sm'>
                         <span>Don't have an account yet?</span>

@@ -32,7 +32,6 @@ const loginUser = asyncHandler(async (req, res, next) => {
     ApiError(next, !isPasswordCorrect, 400, 'Invalid Credentials');
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(validUser._id);
-
     const user = await User.findById(validUser._id).select('-password -refreshToken');
 
     // Response...
@@ -41,6 +40,46 @@ const loginUser = asyncHandler(async (req, res, next) => {
         .cookie('refreshToken', refreshToken, refreshTokenOptions)
         .status(200)
         .json(new ApiResponse(200, { user, accessToken, refreshToken }, 'User logged in successfully'));
+});
+
+const googleSignIn = asyncHandler(async (req, res, next) => {
+    const { name, email, googlePhotoUrl } = req.body;
+    console.log(name, email, googlePhotoUrl);
+
+    const user = await User.findOne({ email });
+    if (user) {
+        user.fullName = name;
+        user.profilePicutre = googlePhotoUrl;
+        await user.save();
+
+        const { accessToken, refreshToken } = generateAccessAndRefreshToken(user._id);
+        const userRes = await User.findById(user._id).select('-password -refreshToken');
+
+        res.status(200)
+            .cookie('accessToken', accessToken, accessTokenOptions)
+            .cookie('refreshToken', refreshToken, refreshTokenOptions)
+            .json(new ApiResponse(200, { user: userRes, accessToken, refreshToken }, 'user SignIn successfully'));
+    } else {
+        const password = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+        const userName = name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4);
+
+        const newUser = new User({
+            fullName: name,
+            userName,
+            email,
+            password,
+            profilePicutre: googlePhotoUrl,
+        });
+        await newUser.save();
+
+        const { accessToken, refreshToken } = generateAccessAndRefreshToken(newUser._id);
+        const userRes = await User.findById(user._id).select('-password -refreshToken');
+
+        res.status(200)
+            .cookie('accessToken', accessToken, accessTokenOptions)
+            .cookie('refreshToken', refreshToken, refreshTokenOptions)
+            .json(new ApiResponse(200, { user: userRes, accessToken, refreshToken }, 'user SignIn successfully '));
+    }
 });
 
 const validateToken = asyncHandler(async (req, res) => {
@@ -58,4 +97,4 @@ const logoutUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { userId: req.user._id }, 'user logged out successfully'));
 });
 
-export { registerUser, loginUser, validateToken, logoutUser };
+export { registerUser, loginUser, validateToken, logoutUser, googleSignIn };

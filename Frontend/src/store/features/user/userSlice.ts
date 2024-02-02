@@ -5,6 +5,7 @@ type currentUser = {
     fullName: string;
     userName: string;
     email: string;
+    profilePicutre: string;
     createdAt: string;
     updatedAt: string;
     __v: number;
