@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import FooterCom from '../components/Footer/Footer';
 
-const AuthLayout = () => {
+const Layout = () => {
     return (
         <div className='flex flex-col min-h-screen'>
             <Header />
@@ -14,4 +14,4 @@ const AuthLayout = () => {
     );
 };
 
-export default AuthLayout;
+export default Layout;
