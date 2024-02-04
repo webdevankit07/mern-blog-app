@@ -1,13 +1,15 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
-import app from "./app.js";
-import connectDB from "./db/connectDB.js";
-import customError, { ApiError } from "./utils/customErrorHandler.js";
-import globalErrorHandler from "./middlewares/globalErrorHandler.middleware.js";
+import app from './app.js';
+import connectDB from './db/connectDB.js';
+import customError from './utils/customErrorHandler.js';
+import globalErrorHandler from './middlewares/globalErrorHandler.middleware.js';
 
 // error handling for unhandled routes....
-app.all("*", (req, res, next) => {
-    ApiError(next, true, 404, `can't find ${req.originalUrl} on the server`);
+app.all('*', (req, _, next) => {
+    if (!token) {
+        return next(new customError(404, `can't find ${req.originalUrl} on the server`));
+    }
 });
 
 // global error handler middleware...

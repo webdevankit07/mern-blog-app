@@ -9,10 +9,4 @@ class customError extends Error {
     }
 }
 
-export const ApiError = (next, condition, statusCode, message) => {
-    if (condition) {
-        return next(new customError(statusCode, message));
-    }
-};
-
 export default customError;
