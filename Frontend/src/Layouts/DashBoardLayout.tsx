@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import Header from '../components/Header/Header';
 import FooterCom from '../components/Footer/Footer';
+import Header from '../components/Header/Header';
 
 const DashBoardLayout = () => {
     return (

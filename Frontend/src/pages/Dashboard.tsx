@@ -15,7 +15,7 @@ const Dashboard = () => {
 
     return (
         <div className='flex flex-col md:flex-row'>
-            <div className='min-h-screen min-w-56'>
+            <div className='md:min-h-screen min-w-56'>
                 <DashSidebar />
             </div>
             {tab === 'profile' && <DashProfile />}
