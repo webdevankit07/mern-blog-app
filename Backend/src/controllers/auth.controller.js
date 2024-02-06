@@ -58,8 +58,10 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
         user.profilePicutre = googlePhotoUrl;
         await user.save();
 
-        const { accessToken, refreshToken } = generateAccessAndRefreshToken(user._id);
+        const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
         const userRes = await User.findById(user._id).select('-password -refreshToken');
+
+        console.log({ baccessToken: accessToken, brefreshToken: refreshToken });
 
         res.status(200)
             .cookie('accessToken', accessToken, accessTokenOptions)
@@ -86,19 +88,4 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
             .cookie('refreshToken', refreshToken, refreshTokenOptions)
             .json(new ApiResponse(200, { user: userRes, accessToken, refreshToken }, 'user SignIn successfully '));
     }
-});
-
-export const validateToken = asyncHandler(async (req, res) => {
-    res.status(200).json(new ApiResponse(200, { userId: req.user._id }, 'user valid'));
-});
-
-export const logoutUser = asyncHandler(async (req, res) => {
-    await User.findByIdAndUpdate(req.user._id, { $unset: { refreshToken: 1 } });
-
-    // Response....
-    const options = { httpOnly: true, secure: true };
-    res.status(200)
-        .clearCookie('accessToken', options)
-        .clearCookie('refreshToken', options)
-        .json(new ApiResponse(200, { userId: req.user._id }, 'user logged out successfully'));
 });

@@ -3,12 +3,12 @@ import customError from '../utils/customErrorHandler.js';
 import jwt from 'jsonwebtoken';
 
 const verifyToken = async (req, _, next) => {
-    const token = req.cookies?.accessToken;
-    if (!token) {
-        return next(new customError(401, 'unauthorized'));
-    }
-
     try {
+        const token = req.cookies?.accessToken;
+        if (!token) {
+            return next(new customError(401, 'unauthorized'));
+        }
+
         const decodeToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         const user = await User.findById(decodeToken._id).select('-password -refreshToken');
         if (!user) {

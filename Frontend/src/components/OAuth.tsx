@@ -25,7 +25,6 @@ const OAuth = () => {
             };
 
             const { data } = await axios.post('/api/v1/auth/google', googleData);
-            console.log('data from response', data.data.user);
             dispatch(signInSuccess(data.data.user));
             navigate('/');
         } catch (error) {

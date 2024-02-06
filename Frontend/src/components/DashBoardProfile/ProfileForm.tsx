@@ -68,7 +68,7 @@ const ProfileForm = ({ register, currentUser }: PropsType) => {
                         id='password'
                         disabled={isPasswordDisabled}
                         icon={RiLockPasswordFill}
-                        defaultValue={'Enter Your Password'}
+                        placeholder='*************'
                         {...register('password', {
                             validate: {
                                 lengthError: (value) => {

@@ -6,11 +6,97 @@ import customError from '../utils/customErrorHandler.js';
 // ......... Controllers .............//
 export const updateUser = asyncHandler(async (req, res, next) => {
     const { userName, email, password, profilePicutre } = req.body;
+    console.log({ userName, email, password, profilePicutre });
 
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-        return next(new customError(403, 'unauthorized'));
+    if (req.user.id !== req.params.userId) {
+        return next(new customError(403, 'You are not allowed to update this user'));
     }
 
-    return res.status(200).json(new ApiResponse(200, user, 'success'));
+    const user = await User.findById(req.params.userId);
+
+    if (userName && userName !== undefined) {
+        if (userName.length < 7 || userName.length > 20) {
+            return next(new customError(400, 'userName must be at between 7 and 20 characters'));
+        }
+        if (userName.includes(' ')) {
+            return next(new customError(400, 'userName cannot contain spaces'));
+        }
+        if (!userName.match(/^[a-zA-Z0-9]+$/)) {
+            return next(new customError(400, 'userName can only contains letter or number'));
+        }
+        const isUsernameMatched = await User.findOne({ userName: userName.toLowerCase() });
+        if (isUsernameMatched) {
+            const isAuthorizedUserName = isUsernameMatched.userName === user.userName;
+            if (!isAuthorizedUserName) {
+                return next(new customError(400, 'userName already exists'));
+            }
+        }
+        user.userName = userName.toLowerCase();
+    }
+
+    if (email && email !== undefined) {
+        if (
+            !email.match(
+                /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+            )
+        ) {
+            return next(new customError(400, 'Not a valid email'));
+        }
+        if (email.length < 7) {
+            return next(new customError(400, 'email must be at least 7 characters'));
+        }
+        const isEmailMatched = await User.findOne({ email: email });
+        if (isEmailMatched) {
+            const isAuthorizedEmail = isEmailMatched.email === user.email;
+            if (!isAuthorizedEmail) {
+                return next(new customError(400, 'email already exists'));
+            }
+        }
+        user.email = email;
+    }
+
+    if (password && password !== undefined) {
+        if (password.length < 6) {
+            return next(new customError(400, 'Password must be at least 6 characters'));
+        }
+        user.password = password;
+    }
+
+    if (profilePicutre && profilePicutre !== undefined) {
+        user.profilePicutre = profilePicutre;
+    }
+
+    const updatedUser = await user.save();
+    console.log(updateUser);
+
+    return res.status(200).json(new ApiResponse(200, { updatedUser }, 'user successfully updated'));
+});
+
+export const deleteUser = asyncHandler(async (req, res, next) => {
+    if (req.user.id !== req.params.userId) {
+        return next(new customError(403, 'You are not allowed to delete this user'));
+    }
+
+    const user = await User.findByIdAndDelete(req.user._id);
+
+    res.status(200).json(new ApiResponse(200, { deleteUser: user }, 'user successfully deleted'));
+});
+
+export const validateToken = asyncHandler(async (req, res) => {
+    res.status(200).json(new ApiResponse(200, { userId: req.user._id }, 'user valid'));
+});
+
+export const logoutUser = asyncHandler(async (req, res) => {
+    if (req.user.id !== req.params.userId) {
+        return next(new customError(403, 'You are not allowed to logout this user'));
+    }
+
+    await User.findByIdAndUpdate(req.user._id, { $unset: { refreshToken: 1 } });
+
+    // Response....
+    const options = { httpOnly: true, secure: true };
+    res.status(200)
+        .clearCookie('accessToken', options)
+        .clearCookie('refreshToken', options)
+        .json(new ApiResponse(200, { userId: req.user._id }, 'user logged out successfully'));
 });
