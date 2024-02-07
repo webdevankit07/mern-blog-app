@@ -55,7 +55,7 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
     const user = await User.findOne({ email });
     if (user) {
         user.fullName = name;
-        user.profilePicutre = googlePhotoUrl;
+        user.profilePicture = googlePhotoUrl;
         await user.save();
 
         const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
@@ -76,7 +76,7 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
             userName,
             email,
             password,
-            profilePicutre: googlePhotoUrl,
+            profilePicture: googlePhotoUrl,
         });
         await newUser.save();
 

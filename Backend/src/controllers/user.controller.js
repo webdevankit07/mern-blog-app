@@ -5,8 +5,8 @@ import customError from '../utils/customErrorHandler.js';
 
 // ......... Controllers .............//
 export const updateUser = asyncHandler(async (req, res, next) => {
-    const { userName, email, password, profilePicutre } = req.body;
-    console.log({ userName, email, password, profilePicutre });
+    const { userName, email, password, profilePicture } = req.body;
+    console.log({ userName, email, password, profilePicture });
 
     if (req.user.id !== req.params.userId) {
         return next(new customError(403, 'You are not allowed to update this user'));
@@ -14,7 +14,7 @@ export const updateUser = asyncHandler(async (req, res, next) => {
 
     const user = await User.findById(req.params.userId);
 
-    if (userName && userName !== undefined) {
+    if (userName) {
         if (userName.length < 7 || userName.length > 20) {
             return next(new customError(400, 'userName must be at between 7 and 20 characters'));
         }
@@ -34,7 +34,7 @@ export const updateUser = asyncHandler(async (req, res, next) => {
         user.userName = userName.toLowerCase();
     }
 
-    if (email && email !== undefined) {
+    if (email) {
         if (
             !email.match(
                 /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -55,15 +55,15 @@ export const updateUser = asyncHandler(async (req, res, next) => {
         user.email = email;
     }
 
-    if (password && password !== undefined) {
+    if (password) {
         if (password.length < 6) {
             return next(new customError(400, 'Password must be at least 6 characters'));
         }
         user.password = password;
     }
 
-    if (profilePicutre && profilePicutre !== undefined) {
-        user.profilePicutre = profilePicutre;
+    if (profilePicture) {
+        user.profilePicture = profilePicture;
     }
 
     const updatedUser = await user.save();

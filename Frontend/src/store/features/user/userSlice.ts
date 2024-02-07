@@ -5,7 +5,7 @@ export type currentUser = {
     fullName: string;
     userName: string;
     email: string;
-    profilePicutre: string;
+    profilePicture: string;
     createdAt: string;
     updatedAt: string;
     __v: number;
@@ -27,6 +27,9 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+        setUserError: (state: InitialState, { payload }: PayloadAction<string | null>) => {
+            state.error = payload;
+        },
         signInStart: (state: InitialState) => {
             state.loading = true;
             state.error = null;
@@ -57,5 +60,12 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { signInStart, signInSuccess, signInFailure, updateUserStart, updateUserSuccess, updateUserFailure } =
-    userSlice.actions;
+export const {
+    setUserError,
+    signInStart,
+    signInSuccess,
+    signInFailure,
+    updateUserStart,
+    updateUserSuccess,
+    updateUserFailure,
+} = userSlice.actions;

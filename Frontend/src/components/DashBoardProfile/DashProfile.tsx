@@ -8,13 +8,18 @@ import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
 import { firebaseStorage } from '../../firebase';
 import ProfileForm from './ProfileForm';
 import axios from 'axios';
-import { updateUserFailure, updateUserStart, updateUserSuccess } from '../../store/features/user/userSlice';
+import {
+    setUserError,
+    updateUserFailure,
+    updateUserStart,
+    updateUserSuccess,
+} from '../../store/features/user/userSlice';
+import ShowAlert from '../showAlert';
 
 export type profileFormData = {
     userName: string | null;
     email: string | null;
     password: string | null;
-    profilePicture?: string | null;
 };
 
 interface ValidationError {
@@ -29,6 +34,7 @@ const DashProfile = () => {
     const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
     const [imageFileUploadingProgress, setImageFileUploadingProgress] = useState<number | null>(null);
     const [imageFileUploadError, setImageFileUploadError] = useState<string | null>(null);
+    const [updateSuccess, setUpdateSuccess] = useState<string | null>(null);
     const filePickerRef = useRef<HTMLInputElement | null>(null);
     const dispatch = useAppDispatch();
 
@@ -46,6 +52,10 @@ const DashProfile = () => {
             setImageFileUrl(URL.createObjectURL(file));
         }
     };
+
+    useEffect(() => {
+        dispatch(setUserError(null));
+    }, [dispatch]);
 
     useEffect(() => {
         if (imageFile) {
@@ -70,7 +80,6 @@ const DashProfile = () => {
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                         setUpdatedImageUrl(downloadURL);
-                        setImageFileUploadingProgress(null);
                     });
                 }
             );
@@ -80,31 +89,46 @@ const DashProfile = () => {
     // Form Submit....*;
     const handleFormSubmit = async (data: profileFormData) => {
         const { userName, email, password } = data;
-        let { profilePicture } = data;
-        if (imageFileUrl) {
-            profilePicture = updatedImageUrl || undefined;
+
+        if (imageFileUploadingProgress && imageFileUploadingProgress > 0 && imageFileUploadingProgress < 100) {
+            return dispatch(setUserError('Please wait while image uploading...'));
         }
+
+        if (
+            (userName === undefined || userName === currentUser?.userName) &&
+            (email === undefined || email === currentUser?.email) &&
+            password === undefined &&
+            updatedImageUrl === null
+        ) {
+            return dispatch(setUserError('No changes made in profile'));
+        }
+
+        const profilePicture = updatedImageUrl || undefined;
         const formData = {
             userName,
             email,
             password,
             profilePicture,
         };
+
+        setUpdateSuccess(null);
         dispatch(updateUserStart());
         try {
             if (Object.keys(formData).length === 0 || (!userName && !email && !password && !profilePicture)) {
-                return;
+                return dispatch(setUserError('No changes made in profile'));
             }
+
+            console.log(formData);
             const { data } = await axios.put(`/api/v1/user/update/${currentUser?._id}`, formData);
             console.log(data.data.updatedUser);
             dispatch(updateUserSuccess(data.data.updatedUser));
+            setImageFileUploadingProgress(null);
+            setUpdateSuccess('user updated successfully.');
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                console.log(error.response?.data.message);
                 dispatch(updateUserFailure(error.response?.data.message));
             } else {
                 const err = error as Error;
-                console.log(err.message);
                 dispatch(updateUserFailure(err.message));
             }
         }
@@ -126,7 +150,7 @@ const DashProfile = () => {
                     onClick={() => filePickerRef.current?.click()}
                 >
                     <img
-                        src={imageFileUrl || currentUser?.profilePicutre}
+                        src={imageFileUrl || currentUser?.profilePicture}
                         alt='user'
                         className={`w-full h-full rounded-full border-4 border-[lightgray] object-cover  ${
                             imageFileUploadingProgress && imageFileUploadingProgress < 100 && 'opacity-60'
@@ -157,23 +181,16 @@ const DashProfile = () => {
                         {imageFileUploadError}
                     </Alert>
                 )}
+
+                {/* //!  Profile form */}
                 <ProfileForm register={register} currentUser={currentUser} />
             </form>
-            {errors.email && (
-                <Alert className='mt-5 text-center' color={'failure'}>
-                    {errors.email?.message}
-                </Alert>
+            {updateSuccess && (
+                <ShowAlert message={updateSuccess} type='success' onClose={() => setUpdateSuccess(null)} />
             )}
-            {errors.password && (
-                <Alert className='mt-5 text-center' color={'failure'}>
-                    {errors.password?.message}
-                </Alert>
-            )}
-            {error && (
-                <Alert className='mt-5 text-center' color={'failure'}>
-                    {error}
-                </Alert>
-            )}
+            {errors.email && <ShowAlert message={errors.email?.message} type='failure' />}
+            {errors.password && <ShowAlert message={errors.password?.message} type='failure' />}
+            {error && <ShowAlert message={error} type='failure' onClose={() => dispatch(setUserError(null))} />}
         </div>
     );
 };
