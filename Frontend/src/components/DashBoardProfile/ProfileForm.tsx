@@ -1,4 +1,4 @@
-import { Button, TextInput } from 'flowbite-react';
+import { Button, Modal, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdEditOff, MdEmail, MdModeEdit } from 'react-icons/md';
@@ -6,18 +6,52 @@ import { RiLockPasswordFill } from 'react-icons/ri';
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { UseFormRegister } from 'react-hook-form';
 import { profileFormData } from './DashProfile';
-import { currentUser } from '../../store/features/user/userSlice';
+import {
+    currentUser,
+    deleteUserFailure,
+    deleteUserStart,
+    deleteUserSuccess,
+} from '../../store/features/user/userSlice';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import axios from 'axios';
+import { useAppDispatch } from '../../store/storeHooks';
 
 type PropsType = {
     register: UseFormRegister<profileFormData>;
     currentUser: currentUser | null;
 };
 
+interface ValidationError {
+    message: string;
+    errors: Record<string, string[]>;
+}
+
 const ProfileForm = ({ register, currentUser }: PropsType) => {
     const [isUsernameDisabled, setIsUsernameDisabled] = useState<boolean>(true);
     const [isEmailDisabled, setIsEmailDisabled] = useState<boolean>(true);
     const [isPasswordDisabled, setIsPasswordDisabled] = useState<boolean>(true);
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
+
+    // Delete User....*:
+    const handleDeleteUser = async () => {
+        setShowModal(false);
+        dispatch(deleteUserStart());
+        try {
+            await axios.delete(`/api/v1/user/delete/${currentUser?._id}`);
+            dispatch(deleteUserSuccess());
+        } catch (error) {
+            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+                console.log(error.response?.data.message);
+                dispatch(deleteUserFailure(error.response?.data.message));
+            } else {
+                const err = error as Error;
+                console.log(err);
+                dispatch(deleteUserFailure(err.message));
+            }
+        }
+    };
 
     return (
         <div>
@@ -98,13 +132,38 @@ const ProfileForm = ({ register, currentUser }: PropsType) => {
                 </Button>
             </div>
             <div className='flex justify-between mt-4 text-red-500'>
-                <Button className='cursor-pointer' color='failure' outline>
+                <Button className='cursor-pointer' color='failure' outline onClick={() => setShowModal(true)}>
                     Delete Account
                 </Button>
                 <Button className='cursor-pointer' gradientDuoTone={'pinkToOrange'} outline>
                     Sign Out
                 </Button>
             </div>
+            <Modal show={showModal} onClose={() => setShowModal(false)} popup size={'md'}>
+                <Modal.Header />
+                <Modal.Body>
+                    <div className='text-center'>
+                        <HiOutlineExclamationCircle className='mx-auto mb-4 text-gray-400 h-14 w-14 dark:text-gray-200' />
+                        <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+                            Are you sure you want to delete your account?
+                        </h3>
+                        <div className='flex justify-center gap-5'>
+                            <Button
+                                onClick={() => {
+                                    setShowModal(false);
+                                }}
+                                color='gray'
+                                outline
+                            >
+                                No, cancle
+                            </Button>
+                            <Button color='failure' onClick={handleDeleteUser}>
+                                Yes, I'm sure
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };
