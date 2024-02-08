@@ -11,6 +11,7 @@ import {
     deleteUserFailure,
     deleteUserStart,
     deleteUserSuccess,
+    signoutUserSuccess,
 } from '../../store/features/user/userSlice';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import axios from 'axios';
@@ -41,6 +42,24 @@ const ProfileForm = ({ register, currentUser }: PropsType) => {
         try {
             await axios.delete(`/api/v1/user/delete/${currentUser?._id}`);
             dispatch(deleteUserSuccess());
+        } catch (error) {
+            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+                console.log(error.response?.data.message);
+                dispatch(deleteUserFailure(error.response?.data.message));
+            } else {
+                const err = error as Error;
+                console.log(err);
+                dispatch(deleteUserFailure(err.message));
+            }
+        }
+    };
+
+    // SignOut User....*:
+    const handleSignout = async () => {
+        setShowModal(false);
+        try {
+            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
+            dispatch(signoutUserSuccess());
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
                 console.log(error.response?.data.message);
@@ -135,7 +154,7 @@ const ProfileForm = ({ register, currentUser }: PropsType) => {
                 <Button className='cursor-pointer' color='failure' outline onClick={() => setShowModal(true)}>
                     Delete Account
                 </Button>
-                <Button className='cursor-pointer' gradientDuoTone={'pinkToOrange'} outline>
+                <Button className='cursor-pointer' gradientDuoTone={'pinkToOrange'} outline onClick={handleSignout}>
                     Sign Out
                 </Button>
             </div>

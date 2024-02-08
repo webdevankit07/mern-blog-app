@@ -6,12 +6,36 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
 import { toggleTheme } from '../../store/features/theme/themeSlice';
+import { deleteUserFailure, signoutUserSuccess } from '../../store/features/user/userSlice';
+import axios from 'axios';
+
+interface ValidationError {
+    message: string;
+    errors: Record<string, string[]>;
+}
 
 const Header = () => {
     const { theme } = useAppSelector((state) => state.theme);
     const { currentUser } = useAppSelector((state) => state.user);
     const path = useLocation().pathname;
     const dispatch = useAppDispatch();
+
+    // SignOut User....*:
+    const handleSignout = async () => {
+        try {
+            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
+            dispatch(signoutUserSuccess());
+        } catch (error) {
+            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+                console.log(error.response?.data.message);
+                dispatch(deleteUserFailure(error.response?.data.message));
+            } else {
+                const err = error as Error;
+                console.log(err);
+                dispatch(deleteUserFailure(err.message));
+            }
+        }
+    };
 
     return (
         <Navbar className='border-b-2'>
@@ -55,7 +79,7 @@ const Header = () => {
                             <Dropdown.Item>Profile</Dropdown.Item>
                         </Link>
 
-                        <Dropdown.Item>
+                        <Dropdown.Item onClick={handleSignout}>
                             <span className='w-full text-center'>Sign out</span>
                         </Dropdown.Item>
                     </Dropdown>
