@@ -6,20 +6,21 @@ type alertProps = {
     type: 'success' | 'failure';
     className?: string;
     onClose?: () => void;
+    errorDuration?: number;
 };
 
-const ShowAlert = ({ message, type, onClose, className }: alertProps) => {
+const ShowAlert = ({ message, type, onClose, className, errorDuration }: alertProps) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             if (onClose) {
                 onClose();
             }
-        }, 5000);
+        }, errorDuration || 5000);
 
         return () => {
             clearTimeout(timer);
         };
-    }, [onClose]);
+    }, [onClose, errorDuration]);
 
     return (
         <Alert className={`mt-5 text-center ${className}`} color={type}>
