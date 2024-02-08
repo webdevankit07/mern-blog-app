@@ -8,6 +8,7 @@ export type currentUser = {
     profilePicture: string;
     createdAt: string;
     updatedAt: string;
+    isAdmin: boolean;
     __v: number;
 };
 

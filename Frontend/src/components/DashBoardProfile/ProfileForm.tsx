@@ -16,10 +16,12 @@ import {
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import axios from 'axios';
 import { useAppDispatch } from '../../store/storeHooks';
+import { Link } from 'react-router-dom';
 
 type PropsType = {
     register: UseFormRegister<profileFormData>;
     currentUser: currentUser | null;
+    loading: boolean;
 };
 
 interface ValidationError {
@@ -27,7 +29,7 @@ interface ValidationError {
     errors: Record<string, string[]>;
 }
 
-const ProfileForm = ({ register, currentUser }: PropsType) => {
+const ProfileForm = ({ register, currentUser, loading }: PropsType) => {
     const [isUsernameDisabled, setIsUsernameDisabled] = useState<boolean>(true);
     const [isEmailDisabled, setIsEmailDisabled] = useState<boolean>(true);
     const [isPasswordDisabled, setIsPasswordDisabled] = useState<boolean>(true);
@@ -146,9 +148,16 @@ const ProfileForm = ({ register, currentUser }: PropsType) => {
                     </span>
                 </label>
 
-                <Button type='submit' gradientDuoTone={'purpleToBlue'} outline className='w-full'>
-                    Update
+                <Button type='submit' disabled={loading} gradientDuoTone={'purpleToBlue'} outline className='w-full'>
+                    {loading ? 'Loading...' : 'Update'}
                 </Button>
+                {currentUser && currentUser.isAdmin && (
+                    <Link to={'/create-post'}>
+                        <Button gradientDuoTone={'purpleToPink'} className='w-full'>
+                            Create Post
+                        </Button>
+                    </Link>
+                )}
             </div>
             <div className='flex justify-between mt-4 text-red-500'>
                 <Button className='cursor-pointer' color='failure' outline onClick={() => setShowModal(true)}>

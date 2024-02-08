@@ -8,9 +8,11 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import Layout from './Layouts/Layout';
-import PrivateRoute from './components/PrivateRoute';
-import PrivateAuthRoute from './components/PrivateAuthRoute';
 import DashBoardLayout from './Layouts/DashBoardLayout';
+import CreatePost from './pages/CreatePost';
+import PrivateRoute from './components/PrivateRoutes/PrivateRoute';
+import PrivateAuthRoute from './components/PrivateRoutes/PrivateAuthRoute';
+import OnlyAdminPrivateRoute from './components/PrivateRoutes/OnlyAdminPrivateRoute';
 
 const App = () => {
     return (
@@ -30,6 +32,9 @@ const App = () => {
                 <Route element={<DashBoardLayout />}>
                     <Route element={<PrivateRoute />}>
                         <Route path='/dashboard' element={<Dashboard />} />
+                    </Route>
+                    <Route element={<OnlyAdminPrivateRoute />}>
+                        <Route path='/create-post' element={<CreatePost />} />
                     </Route>
                 </Route>
             </Routes>

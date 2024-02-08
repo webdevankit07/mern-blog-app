@@ -28,7 +28,7 @@ interface ValidationError {
 }
 
 const DashProfile = () => {
-    const { currentUser, error } = useAppSelector((state) => state.user);
+    const { currentUser, error, loading } = useAppSelector((state) => state.user);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
     const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
@@ -181,7 +181,7 @@ const DashProfile = () => {
                 )}
 
                 {/* //!  Profile form */}
-                <ProfileForm register={register} currentUser={currentUser} />
+                <ProfileForm register={register} currentUser={currentUser} loading={loading} />
             </form>
             {updateSuccess && (
                 <ShowAlert message={updateSuccess} type='success' onClose={() => setUpdateSuccess(null)} />
