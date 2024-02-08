@@ -1,4 +1,4 @@
-import customError from "../utils/customErrorHandler.js";
+import customError from '../utils/customErrorHandler.js';
 
 const validate = (schema) => async (req, res, next) => {
     try {

@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { authRoutes } from './routes/auth.routes.js';
 import { userRoutes } from './routes/user.routes.js';
+import { postRoutes } from './routes/post.routes.js';
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use(express.static(path.join(__dirname, '../../Client/dist')));
 // Routes declaration...
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/post', postRoutes);
 
 export default app;
