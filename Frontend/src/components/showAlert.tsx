@@ -4,10 +4,11 @@ import { useEffect } from 'react';
 type alertProps = {
     message: string | undefined;
     type: 'success' | 'failure';
+    className?: string;
     onClose?: () => void;
 };
 
-const ShowAlert = ({ message, type, onClose }: alertProps) => {
+const ShowAlert = ({ message, type, onClose, className }: alertProps) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             if (onClose) {
@@ -21,7 +22,7 @@ const ShowAlert = ({ message, type, onClose }: alertProps) => {
     }, [onClose]);
 
     return (
-        <Alert className='mt-5 text-center' color={type}>
+        <Alert className={`mt-5 text-center ${className}`} color={type}>
             {message}
         </Alert>
     );

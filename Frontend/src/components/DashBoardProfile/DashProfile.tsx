@@ -31,7 +31,7 @@ const DashProfile = () => {
     const { currentUser, error, loading } = useAppSelector((state) => state.user);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
-    const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
+    const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
     const [imageFileUploadingProgress, setImageFileUploadingProgress] = useState<number | null>(null);
     const [imageFileUploadError, setImageFileUploadError] = useState<string | null>(null);
     const [updateSuccess, setUpdateSuccess] = useState<string | null>(null);
@@ -79,7 +79,7 @@ const DashProfile = () => {
                 },
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        setUpdatedImageUrl(downloadURL);
+                        setUploadedImageUrl(downloadURL);
                     });
                 }
             );
@@ -98,12 +98,12 @@ const DashProfile = () => {
             (userName === undefined || userName === currentUser?.userName) &&
             (email === undefined || email === currentUser?.email) &&
             password === undefined &&
-            updatedImageUrl === null
+            uploadedImageUrl === null
         ) {
             return dispatch(setUserError('No changes made in profile'));
         }
 
-        const profilePicture = updatedImageUrl || undefined;
+        const profilePicture = uploadedImageUrl || undefined;
         const formData = {
             userName,
             email,
