@@ -2,6 +2,7 @@ import User from '../models/user.model.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import customError from '../utils/customErrorHandler.js';
+import { accessTokenOptions, refreshTokenOptions } from '../utils/utils.js';
 
 // ......... Controllers .............//
 export const updateUser = asyncHandler(async (req, res, next) => {
@@ -76,14 +77,12 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
     if (req.user.id !== req.params.userId) {
         return next(new customError(403, 'You are not allowed to delete this user'));
     }
+    await User.findByIdAndDelete(req.user._id);
 
-    const user = await User.findByIdAndDelete(req.user._id);
-
-    res.status(200).json(new ApiResponse(200, { deleteUser: user }, 'user successfully deleted'));
-});
-
-export const validateToken = asyncHandler(async (req, res) => {
-    res.status(200).json(new ApiResponse(200, { userId: req.user._id }, 'user valid'));
+    res.status(200)
+        .clearCookie('accessToken', accessTokenOptions)
+        .clearCookie('refreshToken', refreshTokenOptions)
+        .json(new ApiResponse(200, {}, 'user has been deleted'));
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
@@ -96,7 +95,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
     // Response....
     const options = { httpOnly: true, secure: true };
     res.status(200)
-        .clearCookie('accessToken', options)
-        .clearCookie('refreshToken', options)
+        .clearCookie('accessToken', accessTokenOptions)
+        .clearCookie('refreshToken', refreshTokenOptions)
         .json(new ApiResponse(200, { userId: req.user._id }, 'user logged out successfully'));
 });

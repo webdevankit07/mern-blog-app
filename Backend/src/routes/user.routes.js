@@ -6,7 +6,7 @@ const router = new Router();
 
 // Routes....*:
 router.route('/update/:userId').put(verifyToken, updateUser);
-router.route('/delete/:userId').post(verifyToken, deleteUser);
 router.route('/logout/:userId').post(verifyToken, logoutUser);
+router.route('/delete/:userId').delete(verifyToken, deleteUser);
 
 export { router as userRoutes };

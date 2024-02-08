@@ -50,9 +50,9 @@ export const loginUser = asyncHandler(async (req, res, next) => {
 
 export const googleSignIn = asyncHandler(async (req, res, next) => {
     const { name, email, googlePhotoUrl } = req.body;
-    console.log(name, email, googlePhotoUrl);
 
     const user = await User.findOne({ email });
+
     if (user) {
         user.fullName = name;
         user.profilePicture = googlePhotoUrl;
@@ -80,12 +80,17 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
         });
         await newUser.save();
 
-        const { accessToken, refreshToken } = generateAccessAndRefreshToken(newUser._id);
-        const userRes = await User.findById(user._id).select('-password -refreshToken');
+        const { accessToken, refreshToken } = await generateAccessAndRefreshToken(newUser._id);
+        console.log({ newUser, accessToken, refreshToken });
+        const userRes = await User.findById(newUser._id).select('-password -refreshToken');
 
         res.status(200)
             .cookie('accessToken', accessToken, accessTokenOptions)
             .cookie('refreshToken', refreshToken, refreshTokenOptions)
             .json(new ApiResponse(200, { user: userRes, accessToken, refreshToken }, 'user SignIn successfully '));
     }
+});
+
+export const validateToken = asyncHandler(async (req, res) => {
+    res.status(200).json(new ApiResponse(200, { user: req.user }, 'user valid'));
 });
