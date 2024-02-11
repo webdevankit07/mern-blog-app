@@ -24,13 +24,20 @@ type Post = {
 
 const DashPosts = () => {
     const { currentUser } = useAppSelector((state) => state.user);
-    const [userPosts, setUserPosts] = useState<Post[]>();
+    const [userPosts, setUserPosts] = useState<Post[]>([]);
+    const [showMore, setShowMore] = useState(true);
+    const [pageNo, setPageNo] = useState(1);
+
+    console.log(userPosts);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}`);
                 setUserPosts(data.posts);
+                if (data.posts.length < 9) {
+                    setShowMore(false);
+                }
             } catch (error) {
                 if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
                     // dispatch(updateUserFailure(error.response?.data.message));
@@ -42,8 +49,30 @@ const DashPosts = () => {
                 }
             }
         };
+        setPageNo((prev) => prev + 1);
         fetchPosts();
     }, [currentUser?._id]);
+
+    const handleShow = async () => {
+        try {
+            setPageNo((prev) => prev + 1);
+            const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}&page=${pageNo}`);
+            setUserPosts([...userPosts, ...data.posts]);
+            if (data.posts.length < 9) {
+                setShowMore(false);
+            }
+        } catch (error) {
+            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+                // dispatch(updateUserFailure(error.response?.data.message));
+                console.log(error.response?.data.message);
+            } else {
+                const err = error as Error;
+                // dispatch(updateUserFailure(err.message));
+                console.log(err.message);
+            }
+        }
+    };
+
     return (
         <div className='p-3 overflow-x-scroll table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
             {currentUser?.isAdmin && userPosts && userPosts.length > 0 ? (
@@ -93,6 +122,11 @@ const DashPosts = () => {
                             ))}
                         </Table.Body>
                     </Table>
+                    {showMore && (
+                        <button className='self-center w-full text-sm text-teal-500 py-7' onClick={handleShow}>
+                            Show more
+                        </button>
+                    )}
                 </>
             ) : (
                 <p>You have no posts yet!</p>

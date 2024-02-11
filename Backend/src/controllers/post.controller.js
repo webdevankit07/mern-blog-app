@@ -4,7 +4,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import customError from '../utils/customErrorHandler.js';
 
 export const createPost = asyncHandler(async (req, res, next) => {
-    const { title, content } = req.body;
+    const { title, content, category } = req.body;
 
     if (!req.user.isAdmin) {
         return next(new customError(403, 'You are not allowed to create a post'));
@@ -21,6 +21,7 @@ export const createPost = asyncHandler(async (req, res, next) => {
         .toLowerCase()
         .replace(/[^a-zA-Z0-9-]/g, '');
 
+    console.log(req.body);
     const newPost = new Post({ ...req.body, userId: req.user.id, slug });
 
     const createdPost = await newPost.save();
@@ -84,3 +85,5 @@ export const getAllPosts = asyncHandler(async (req, res) => {
         nbHits: posts.length,
     });
 });
+
+export const deletePost = asyncHandler(async (req, res, next) => {});
