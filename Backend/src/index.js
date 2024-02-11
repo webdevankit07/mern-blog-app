@@ -7,9 +7,7 @@ import globalErrorHandler from './middlewares/globalErrorHandler.middleware.js';
 
 // error handling for unhandled routes....
 app.all('*', (req, _, next) => {
-    if (!token) {
-        return next(new customError(404, `can't find ${req.originalUrl} on the server`));
-    }
+    return next(new customError(404, `can't find ${req.originalUrl} on the server`));
 });
 
 // global error handler middleware...
