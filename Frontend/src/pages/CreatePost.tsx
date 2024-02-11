@@ -70,15 +70,12 @@ const CreatePost = () => {
         e.preventDefault();
         try {
             const { data } = await axios.post('/api/v1/post/create', formData);
-            console.log(data);
             navigate(`/post/${data.data.post.slug}`);
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                console.log(error.response?.data.message);
                 setPublishError(error.response?.data.message);
             } else {
                 const err = error as Error;
-                console.log(err.message);
                 setPublishError(err.message);
             }
         }
