@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/storeHooks';
-import { Table } from 'flowbite-react';
+import { Button, Modal, Table } from 'flowbite-react';
 import { Link } from 'react-router-dom';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 interface ValidationError {
     message: string;
@@ -25,10 +26,10 @@ type Post = {
 const DashPosts = () => {
     const { currentUser } = useAppSelector((state) => state.user);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
-    const [showMore, setShowMore] = useState(true);
-    const [pageNo, setPageNo] = useState(1);
-
-    console.log(userPosts);
+    const [showMore, setShowMore] = useState<boolean>(true);
+    const [pageNo, setPageNo] = useState<number>(1);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [postId, setPostId] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -37,6 +38,8 @@ const DashPosts = () => {
                 setUserPosts(data.posts);
                 if (data.posts.length < 9) {
                     setShowMore(false);
+                } else {
+                    setShowMore(true);
                 }
             } catch (error) {
                 if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
@@ -53,14 +56,34 @@ const DashPosts = () => {
         fetchPosts();
     }, [currentUser?._id]);
 
-    const handleShow = async () => {
+    const handleShowMore = async () => {
         try {
             setPageNo((prev) => prev + 1);
             const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}&page=${pageNo}`);
             setUserPosts([...userPosts, ...data.posts]);
             if (data.posts.length < 9) {
                 setShowMore(false);
+            } else {
+                setShowMore(true);
             }
+        } catch (error) {
+            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+                // dispatch(updateUserFailure(error.response?.data.message));
+                console.log(error.response?.data.message);
+            } else {
+                const err = error as Error;
+                // dispatch(updateUserFailure(err.message));
+                console.log(err.message);
+            }
+        }
+    };
+
+    // Delete Post..
+    const handleDeletePost = async () => {
+        setShowModal(false);
+        try {
+            await axios.delete(`/api/v1/post/deletepost/${postId}/${currentUser?._id}`);
+            setUserPosts((prev) => prev.filter((post) => post._id !== postId));
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
                 // dispatch(updateUserFailure(error.response?.data.message));
@@ -109,7 +132,13 @@ const DashPosts = () => {
                                     </Table.Cell>
                                     <Table.Cell>{post.category}</Table.Cell>
                                     <Table.Cell>
-                                        <span className='font-medium text-red-500 cursor-pointer hover:underline'>
+                                        <span
+                                            className='font-medium text-red-500 cursor-pointer hover:underline'
+                                            onClick={() => {
+                                                setShowModal(true);
+                                                setPostId(post._id);
+                                            }}
+                                        >
                                             Delete
                                         </span>
                                     </Table.Cell>
@@ -123,7 +152,7 @@ const DashPosts = () => {
                         </Table.Body>
                     </Table>
                     {showMore && (
-                        <button className='self-center w-full text-sm text-teal-500 py-7' onClick={handleShow}>
+                        <button className='self-center w-full text-sm text-teal-500 py-7' onClick={handleShowMore}>
                             Show more
                         </button>
                     )}
@@ -131,6 +160,31 @@ const DashPosts = () => {
             ) : (
                 <p>You have no posts yet!</p>
             )}
+            <Modal show={showModal} onClose={() => setShowModal(false)} popup size={'md'}>
+                <Modal.Header />
+                <Modal.Body>
+                    <div className='text-center'>
+                        <HiOutlineExclamationCircle className='mx-auto mb-4 text-gray-400 h-14 w-14 dark:text-gray-200' />
+                        <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+                            Are you sure you want to delete this post?
+                        </h3>
+                        <div className='flex justify-center gap-5'>
+                            <Button
+                                onClick={() => {
+                                    setShowModal(false);
+                                }}
+                                color='gray'
+                                outline
+                            >
+                                No, cancle
+                            </Button>
+                            <Button color='failure' onClick={handleDeletePost}>
+                                Yes, I'm sure
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

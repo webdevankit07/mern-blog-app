@@ -86,4 +86,12 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     });
 });
 
-export const deletePost = asyncHandler(async (req, res, next) => {});
+export const deletePost = asyncHandler(async (req, res, next) => {
+    if (req.user.id !== req.params.userId) {
+        return next(new customError(403, 'You are not allowed to delete this post'));
+    }
+
+    await Post.findByIdAndDelete(req.params.postId);
+
+    res.status(200).json(new ApiResponse(200, {}, 'The post has been deleted'));
+});
