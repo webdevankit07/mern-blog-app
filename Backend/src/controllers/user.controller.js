@@ -97,3 +97,27 @@ export const logoutUser = asyncHandler(async (req, res) => {
         .clearCookie('refreshToken', refreshTokenOptions)
         .json(new ApiResponse(200, { userId: req.user._id }, 'user has been signed out'));
 });
+
+export const getUsers = asyncHandler(async (req, res, next) => {
+    if (!req.user.isAdmin) {
+        return next(new customError(403, 'You are not allowed to access users'));
+    }
+
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+
+    const users = await User.find()
+        .sort({ createdAt: sortDirection })
+        .skip(startIndex)
+        .limit(limit)
+        .select('-password');
+
+    const totalUsers = await User.countDocuments();
+
+    const now = new Date();
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    const lastMonthUsers = await User.countDocuments({ createdAt: { $gte: oneMonthAgo } });
+
+    return res.status(200).json(new ApiResponse(200, { users, totalUsers, lastMonthUsers }, 'Users'));
+});
