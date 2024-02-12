@@ -32,13 +32,15 @@ export const createPost = asyncHandler(async (req, res, next) => {
 export const getAllPosts = asyncHandler(async (req, res) => {
     const { userId, search, title, slug, category, postId, sort, select, page, limit } = req.query;
     let queryObject = {};
-    let apiData;
+    let postData;
+
+    console.log({ postId });
 
     //! ......... Data Filteration ............ //
     userId && (queryObject.userId = { $regex: userId, $options: 'i' });
     category && (queryObject.category = { $regex: category, $options: 'i' });
     slug && (queryObject.slug = { $regex: slug, $options: 'i' });
-    postId && (queryObject._id = { $regex: postId, $options: 'i' });
+    postId && (queryObject._id = postId);
     search && {
         $or: [
             (queryObject.title = { $regex: search, $options: 'i' }),
@@ -46,18 +48,18 @@ export const getAllPosts = asyncHandler(async (req, res) => {
         ],
     };
     title && (queryObject.title = { $regex: title, $options: 'i' });
-    apiData = Post.find(queryObject);
+    postData = Post.find(queryObject);
 
     //! ......... Sorting ............ //
     if (sort) {
         let sortFix = sort.split(',').join(' ');
-        apiData = apiData.sort(sortFix);
+        postData = postData.sort(sortFix);
     }
 
     //! ....... Finding Select items ....... //
     if (select) {
         let selectFix = select.split(',').join(' ');
-        apiData = apiData.select(selectFix);
+        postData = postData.select(selectFix);
     }
 
     //! ....... Pagination ....... //
@@ -66,10 +68,10 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     let skip = (Page - 1) * Limit;
     const leftRange = skip + 1;
     const rightRange = Limit * Page || Limit;
-    apiData = apiData.skip(skip).limit(Limit);
+    postData = postData.skip(skip).limit(Limit);
 
     //! ....... Sending Response ....... //
-    const posts = await apiData;
+    const posts = await postData;
     const totalPosts = await Post.countDocuments();
 
     const now = new Date();
@@ -94,4 +96,36 @@ export const deletePost = asyncHandler(async (req, res, next) => {
     await Post.findByIdAndDelete(req.params.postId);
 
     res.status(200).json(new ApiResponse(200, {}, 'The post has been deleted'));
+});
+
+export const updatePost = asyncHandler(async (req, res, next) => {
+    if (req.user.id !== req.params.userId) {
+        return next(new customError(403, 'You are not allowed to update this post'));
+    }
+
+    const slug = req.body.title
+        .split(' ')
+        .join('-')
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9-]/g, '');
+
+    console.log(slug);
+
+    const updatedPost = await Post.findByIdAndUpdate(
+        req.params.postId,
+        {
+            $set: {
+                title: req.body.title,
+                slug,
+                content: req.body.content,
+                category: req.body.category,
+                image: req.body.image,
+            },
+        },
+        { new: true }
+    );
+
+    console.log(updatePost);
+
+    res.status(201).json(new ApiResponse(201, updatedPost, 'post has been updated successfully'));
 });
