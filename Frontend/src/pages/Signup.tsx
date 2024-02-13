@@ -35,11 +35,11 @@ const Signup = () => {
     } = useForm<SignUpFormData>();
 
     // Form reset.....*;
-    useEffect(() => {
-        if (isSubmitSuccessful) {
-            reset();
-        }
-    }, [isSubmitSuccessful, reset]);
+    // useEffect(() => {
+    //     if (isSubmitSuccessful) {
+    //         reset();
+    //     }
+    // }, [isSubmitSuccessful, reset]);
 
     //Form Submit.....*;
     const handleFormSubmit = async (formData: SignUpFormData) => {

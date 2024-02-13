@@ -60,7 +60,7 @@ const DashUsers = () => {
         }
     };
 
-    // Delete Post..
+    // Delete User..
     const handleDeleteUser = async () => {
         setShowModal(false);
         try {

@@ -74,15 +74,22 @@ export const updateUser = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteUser = asyncHandler(async (req, res, next) => {
-    if (req.user.id !== req.params.userId) {
+    if (!req.user.isAdmin && req.user.id !== req.params.userId) {
         return next(new customError(403, 'You are not allowed to delete this user'));
     }
-    await User.findByIdAndDelete(req.user._id);
+    const deleteUser = await User.findByIdAndDelete(req.params.userId);
+    if (!deleteUser) {
+        return next(new customError(403, 'Error while deleting user'));
+    }
 
-    res.status(200)
-        .clearCookie('accessToken', accessTokenOptions)
-        .clearCookie('refreshToken', refreshTokenOptions)
-        .json(new ApiResponse(200, {}, 'user has been deleted'));
+    if (req.user.isAdmin && req.user.id !== req.params.userId) {
+        res.status(200).json(new ApiResponse(200, {}, 'user has been deleted'));
+    } else {
+        res.status(200)
+            .clearCookie('accessToken', accessTokenOptions)
+            .clearCookie('refreshToken', refreshTokenOptions)
+            .json(new ApiResponse(200, {}, 'user has been deleted'));
+    }
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
