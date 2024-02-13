@@ -32,7 +32,7 @@ const UpdatePost = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios(`/api/v1/post/getposts?postI=${postId}`);
+                const { data } = await axios(`/api/v1/post/getposts?postId=${postId}`);
                 setFormData(data.posts[0]);
                 setPublishError(undefined);
             } catch (error) {

@@ -34,8 +34,6 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     let queryObject = {};
     let postData;
 
-    console.log({ postId });
-
     //! ......... Data Filteration ............ //
     userId && (queryObject.userId = { $regex: userId, $options: 'i' });
     category && (queryObject.category = { $regex: category, $options: 'i' });
