@@ -8,6 +8,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import ShowAlert from '../components/showAlert';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BiCategory } from 'react-icons/bi';
 
 type FormData = {
     title?: string;

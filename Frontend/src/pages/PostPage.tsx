@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { handleAxiosError } from '../utils/utils';
 import axios from 'axios';
 import { Button, Spinner } from 'flowbite-react';
+import CommentSection from '../components/CommentSection';
 
 type Post = {
     _id: string;
@@ -64,6 +65,9 @@ const PostPage = () => {
                     dangerouslySetInnerHTML={{ __html: post.content }}
                     className='w-full max-w-2xl p-3 mx-auto post-content'
                 ></div>
+                <div>
+                    <CommentSection postId={post._id} />
+                </div>
             </main>
         )
     );
