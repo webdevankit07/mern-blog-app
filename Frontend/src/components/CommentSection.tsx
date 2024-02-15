@@ -81,7 +81,11 @@ const CommentSection = ({ postId }: PropsType) => {
     };
 
     // handleEdit...*:
-    const handleEdit = async () => {};
+    const handleEdit = async (commentId: string, editedContent: string) => {
+        setComments(
+            comments.map((comment) => (comment._id === commentId ? { ...comment, content: editedContent } : comment))
+        );
+    };
 
     return (
         <div className='w-full max-w-2xl p-3 mx-auto'>

@@ -46,3 +46,22 @@ export const likeComment = asyncHandler(async (req, res, next) => {
 
     res.status(200).json(new ApiResponse(200, comment, 'likes updated'));
 });
+
+export const editComment = asyncHandler(async (req, res, next) => {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+        return next(new customError(404, 'Comment not found'));
+    }
+
+    if (comment.userId !== req.user.id) {
+        return next(new customError(403, 'You are not allowed to edit this comment'));
+    }
+
+    const editedComment = await Comment.findByIdAndUpdate(
+        req.params.commentId,
+        { content: req.body.content },
+        { new: true }
+    );
+
+    res.status(200).json(new ApiResponse(200, editedComment, 'comment updated'));
+});
