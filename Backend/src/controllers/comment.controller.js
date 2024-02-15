@@ -20,3 +20,9 @@ export const createComment = asyncHandler(async (req, res, next) => {
 
     res.status(200).send(new ApiResponse(200, newComment, 'Comment has been created successfully'));
 });
+
+export const getPostComments = asyncHandler(async (req, res, next) => {
+    const comments = await Comment.find({ postId: req.params.postId }).sort({ createdAt: -1 });
+
+    res.status(200).send(new ApiResponse(200, comments, 'success'));
+});

@@ -128,3 +128,12 @@ export const getUsers = asyncHandler(async (req, res, next) => {
 
     return res.status(200).json(new ApiResponse(200, { users, totalUsers, lastMonthUsers }, 'Users'));
 });
+
+export const getUser = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.params.userId).select('-password -email -refreshToken');
+    if (!user) {
+        return next(new customError(404, 'user not found'));
+    }
+
+    res.status(200).json(new ApiResponse(200, user, 'success'));
+});

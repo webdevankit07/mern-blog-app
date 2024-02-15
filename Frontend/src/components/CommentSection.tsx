@@ -1,19 +1,33 @@
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../store/storeHooks';
 import { Button, Textarea } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { handleAxiosError } from '../utils/utils';
 import axios from 'axios';
 import ShowAlert from './showAlert';
+import Comment from './Comment';
 
 type PropsType = {
     postId: string;
+};
+
+export type CommentType = {
+    _id: string;
+    content: string;
+    postId: string;
+    userId: string;
+    likes: unknown;
+    numberOfLikes: number;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 };
 
 const CommentSection = ({ postId }: PropsType) => {
     const { currentUser } = useAppSelector((state) => state.user);
     const [comment, setComment] = useState<string>('');
     const [commentError, setCommentError] = useState<string | undefined | null>(null);
+    const [comments, setComments] = useState<CommentType[] | []>([]);
 
     //Submit comment....*:
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -24,12 +38,32 @@ const CommentSection = ({ postId }: PropsType) => {
             const { data } = await axios.post(`/api/v1/comment/create`, Data);
             setComment('');
             setCommentError(null);
+            setComments([data.data, ...comments]);
             console.log(data.data);
         } catch (error) {
             const err = await handleAxiosError(error);
             setCommentError(err);
         }
     };
+
+    //Get comments.....*:
+    useEffect(() => {
+        (async () => {
+            try {
+                const { data } = await axios(`/api/v1/comment/getPostComments/${postId}`);
+                setComments(data.data);
+            } catch (error) {
+                const err = await handleAxiosError(error);
+                console.log(err);
+            }
+        })();
+    }, [postId]);
+
+    // handleLike...*:
+    const handleLike = async () => {};
+
+    // handleEdit...*:
+    const handleEdit = async () => {};
 
     return (
         <div className='w-full max-w-2xl p-3 mx-auto'>
@@ -73,6 +107,30 @@ const CommentSection = ({ postId }: PropsType) => {
                         <ShowAlert message={commentError} type='failure' errorDuration={5000} className='mt-5' />
                     )}
                 </form>
+            )}
+            {comments.length === 0 ? (
+                <p className='my-5 text-sm'>No comments yet!</p>
+            ) : (
+                <>
+                    <div className='flex items-center gap-1 my-5 text-sm'>
+                        <p>Comments</p>
+                        <div className='px-2 py-1 border border-gray-400 rounded-sm'>
+                            <p>{comments.length}</p>
+                        </div>
+                    </div>
+                    {comments.map((comment) => (
+                        <Comment
+                            key={comment._id}
+                            comment={comment}
+                            onLike={handleLike}
+                            onEdit={handleEdit}
+                            onDelete={(commentId) => {
+                                // setShowModal(true);
+                                // setCommentToDelete(commentId);
+                            }}
+                        />
+                    ))}
+                </>
             )}
         </div>
     );
