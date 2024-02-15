@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../store/storeHooks';
 import { Button, Textarea } from 'flowbite-react';
 import { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ export type CommentType = {
     content: string;
     postId: string;
     userId: string;
-    likes: unknown;
+    likes: Array<string>;
     numberOfLikes: number;
     createdAt: string;
     updatedAt: string;
@@ -28,6 +28,7 @@ const CommentSection = ({ postId }: PropsType) => {
     const [comment, setComment] = useState<string>('');
     const [commentError, setCommentError] = useState<string | undefined | null>(null);
     const [comments, setComments] = useState<CommentType[] | []>([]);
+    const navigate = useNavigate();
 
     //Submit comment....*:
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,7 +61,24 @@ const CommentSection = ({ postId }: PropsType) => {
     }, [postId]);
 
     // handleLike...*:
-    const handleLike = async () => {};
+    const handleLike = async (commentId: string) => {
+        try {
+            if (!currentUser) {
+                return navigate('/sign-in');
+            }
+            const { data } = await axios.put(`/api/v1/comment/like-comment/${commentId}`);
+            setComments(
+                comments.map((comment) =>
+                    comment._id === commentId
+                        ? { ...comment, likes: data.data.likes, numberOfLikes: data.data.numberOfLikes }
+                        : comment
+                )
+            );
+        } catch (error) {
+            const err = handleAxiosError(error);
+            console.log(err);
+        }
+    };
 
     // handleEdit...*:
     const handleEdit = async () => {};
