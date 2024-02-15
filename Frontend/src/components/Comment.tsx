@@ -52,7 +52,7 @@ const Comment = ({ comment, onLike, onEdit, onDelete }: PropsType) => {
     // handleSave function....*:
     const handleSave = async () => {
         try {
-            const { data } = await axios.put(`/api/v1/comment/edit-comment/${comment._id}`, { content: editedContent });
+            await axios.put(`/api/v1/comment/edit-comment/${comment._id}`, { content: editedContent });
             setIsEditing(false);
             onEdit(comment._id, editedContent);
         } catch (error) {
