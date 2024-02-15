@@ -4,8 +4,9 @@ import { handleAxiosError } from '../utils/utils';
 import axios from 'axios';
 import { Button, Spinner } from 'flowbite-react';
 import CommentSection from '../components/CommentSection';
+import PostCard from '../components/PostCard';
 
-type Post = {
+export type Post = {
     _id: string;
     userId: string;
     title: string;
@@ -22,10 +23,12 @@ const PostPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     const [post, setPost] = useState<Post | null>(null);
+    const [recentPosts, setRecentPosts] = useState<Post[] | null>(null);
     const { postSlug } = useParams();
 
     useEffect(() => {
         (async () => {
+            setLoading(true);
             try {
                 const { data } = await axios(`/api/v1/post/getposts?slug=${postSlug}`);
                 setPost(data.posts[0]);
@@ -39,12 +42,26 @@ const PostPage = () => {
         })();
     }, [postSlug]);
 
-    if (loading)
+    useEffect(() => {
+        (async () => {
+            try {
+                const { data } = await axios(`/api/v1/post/getposts?limit=3`);
+                setRecentPosts(data.posts);
+            } catch (error) {
+                const err = handleAxiosError(error);
+                setError(true);
+                console.log(err);
+            }
+        })();
+    }, []);
+
+    if (loading) {
         return (
             <div className='grid min-h-screen place-content-center'>
                 <Spinner size={'xl'} />
             </div>
         );
+    }
     return (
         post && (
             <main className='flex flex-col max-w-6xl min-h-screen p-3 mx-auto'>
@@ -63,10 +80,19 @@ const PostPage = () => {
                 </div>
                 <div
                     dangerouslySetInnerHTML={{ __html: post.content }}
-                    className='w-full max-w-2xl p-3 mx-auto post-content'
+                    className='w-full max-w-3xl p-3 mx-auto xl:max-w-4xl post-content'
                 ></div>
                 <div>
                     <CommentSection postId={post._id} />
+                </div>
+                <div className='flex flex-col items-center justify-center mb-5'>
+                    <h1 className='flex flex-col items-center pb-1 mt-5 text-xl'>
+                        Recent Articles <hr className='w-[170px] mx-auto mt-2' />
+                    </h1>
+
+                    <div className='flex flex-wrap justify-center gap-5 mt-5'>
+                        {recentPosts && recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+                    </div>
                 </div>
             </main>
         )
