@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, '../../Client/dist')));
+app.use(express.static(path.join(__dirname, '../../Frontend/dist')));
 
 // Routes declaration...
 app.use('/api/v1/auth', authRoutes);

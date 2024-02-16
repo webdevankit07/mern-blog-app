@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -28,18 +28,10 @@ const Signup = () => {
     const navigate = useNavigate();
     const {
         register,
-        formState: { errors, isSubmitSuccessful },
+        formState: { errors },
         handleSubmit,
-        reset,
         watch,
     } = useForm<SignUpFormData>();
-
-    // Form reset.....*;
-    // useEffect(() => {
-    //     if (isSubmitSuccessful) {
-    //         reset();
-    //     }
-    // }, [isSubmitSuccessful, reset]);
 
     //Form Submit.....*;
     const handleFormSubmit = async (formData: SignUpFormData) => {

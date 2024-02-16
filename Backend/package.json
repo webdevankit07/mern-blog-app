@@ -6,7 +6,8 @@
     "main": "index.js",
     "scripts": {
         "dev": "nodemon src/index.js",
-        "start": "node src/index.js"
+        "start": "node src/index.js",
+        "build": "npm install && npm install --prefix Frontend && npm run build --prefix Frontend"
     },
     "keywords": [
         "javascript",

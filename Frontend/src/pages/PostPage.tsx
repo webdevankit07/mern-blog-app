@@ -21,7 +21,6 @@ export type Post = {
 
 const PostPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<boolean>(false);
     const [post, setPost] = useState<Post | null>(null);
     const [recentPosts, setRecentPosts] = useState<Post[] | null>(null);
     const { postSlug } = useParams();
@@ -35,7 +34,6 @@ const PostPage = () => {
                 setLoading(false);
             } catch (error) {
                 const err = handleAxiosError(error);
-                setError(true);
                 setLoading(false);
                 console.log(err);
             }
@@ -49,7 +47,6 @@ const PostPage = () => {
                 setRecentPosts(data.data.posts);
             } catch (error) {
                 const err = handleAxiosError(error);
-                setError(true);
                 console.log(err);
             }
         })();
