@@ -33,8 +33,8 @@ const DashPosts = () => {
             setLoading(true);
             try {
                 const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}`);
-                setUserPosts(data.posts);
-                if (data.posts.length < 9) {
+                setUserPosts(data.data.posts);
+                if (data.data.posts.length < 9) {
                     setShowMore(false);
                 } else {
                     setShowMore(true);

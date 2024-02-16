@@ -5,6 +5,7 @@ import DashPosts from '../components/DashBoard/DashPosts';
 import DashSidebar from '../components/DashBoard/DashSidebar';
 import DashUsers from '../components/DashBoard/DashUsers';
 import DashComments from '../components/DashBoard/DashComments';
+import DashBoardComp from '../components/DashBoard/DashBoardComp';
 
 const Dashboard = () => {
     const location = useLocation();
@@ -21,6 +22,7 @@ const Dashboard = () => {
             <div className='md:min-h-screen min-w-56'>
                 <DashSidebar />
             </div>
+            {tab === null && <DashBoardComp />}
             {tab === 'profile' && <DashProfile />}
             {tab === 'posts' && <DashPosts />}
             {tab === 'users' && <DashUsers />}

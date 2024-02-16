@@ -31,7 +31,7 @@ const PostPage = () => {
             setLoading(true);
             try {
                 const { data } = await axios(`/api/v1/post/getposts?slug=${postSlug}`);
-                setPost(data.posts[0]);
+                setPost(data.data.posts[0]);
                 setLoading(false);
             } catch (error) {
                 const err = handleAxiosError(error);
@@ -46,7 +46,7 @@ const PostPage = () => {
         (async () => {
             try {
                 const { data } = await axios(`/api/v1/post/getposts?limit=3`);
-                setRecentPosts(data.posts);
+                setRecentPosts(data.data.posts);
             } catch (error) {
                 const err = handleAxiosError(error);
                 setError(true);

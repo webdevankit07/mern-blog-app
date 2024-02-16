@@ -76,14 +76,20 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
     const lastMonthPosts = await Post.countDocuments({ createdAt: { $gte: oneMonthAgo } });
 
-    res.status(200).json({
-        posts,
-        totalPosts,
-        lastMonthPosts,
-        pageNo: Page,
-        itemRange: `${leftRange}-${rightRange}`,
-        nbHits: posts.length,
-    });
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                posts,
+                totalPosts,
+                lastMonthPosts,
+                pageNo: Page,
+                itemRange: `${leftRange}-${rightRange}`,
+                nbHits: posts.length,
+            },
+            'success'
+        )
+    );
 });
 
 export const deletePost = asyncHandler(async (req, res, next) => {

@@ -7,7 +7,7 @@ import { handleAxiosError } from '../../utils/utils';
 import { FaCheck } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
 
-type Users = {
+export type UserType = {
     _id: string;
     fullName: string;
     userName: string;
@@ -22,7 +22,7 @@ type Users = {
 const DashUsers = () => {
     const { currentUser } = useAppSelector((state) => state.user);
     const [loading, setLoading] = useState<boolean>(true);
-    const [users, setUsers] = useState<Users[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const [showMore, setShowMore] = useState<boolean>(true);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [userIdToDelete, setUserIdToDelete] = useState<string | null>(null);
