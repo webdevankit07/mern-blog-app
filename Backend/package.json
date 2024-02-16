@@ -7,7 +7,7 @@
     "scripts": {
         "dev": "nodemon src/index.js",
         "start": "node src/index.js",
-        "build": "./ npm install && ../../../Frontend &&  npm install --prefix Frontend && npm run build --prefix Frontend"
+        "build": "npm install && npm install --prefix Frontend && npm run build --prefix Frontend"
     },
     "keywords": [
         "javascript",
