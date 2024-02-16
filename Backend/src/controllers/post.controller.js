@@ -30,19 +30,21 @@ export const createPost = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllPosts = asyncHandler(async (req, res) => {
-    const { userId, search, title, slug, category, postId, sort, select, page, limit } = req.query;
+    const { userId, searchTerm, title, slug, category, postId, sort, select, page, limit } = req.query;
     let queryObject = {};
     let postData;
+    console.log(searchTerm);
 
     //! ......... Data Filteration ............ //
     userId && (queryObject.userId = { $regex: userId, $options: 'i' });
     category && (queryObject.category = { $regex: category, $options: 'i' });
+    category === 'all' && delete queryObject.category;
     slug && (queryObject.slug = { $regex: slug, $options: 'i' });
     postId && (queryObject._id = postId);
-    search && {
+    searchTerm && {
         $or: [
-            (queryObject.title = { $regex: search, $options: 'i' }),
-            (queryObject.content = { $regex: search, $options: 'i' }),
+            (queryObject.title = { $regex: searchTerm, $options: 'i' }),
+            (queryObject.content = { $regex: searchTerm, $options: 'i' }),
         ],
     };
     title && (queryObject.title = { $regex: title, $options: 'i' });
@@ -51,7 +53,8 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     //! ......... Sorting ............ //
     if (sort) {
         let sortFix = sort.split(',').join(' ');
-        postData = postData.sort(sortFix);
+        const sortValue = sortFix === 'desc' ? { createdAt: 1 } : sortFix === 'asc' ? { createdAt: -1 } : sortFix;
+        postData = postData.sort(sortValue);
     }
 
     //! ....... Finding Select items ....... //

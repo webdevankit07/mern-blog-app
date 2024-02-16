@@ -14,6 +14,7 @@ import PrivateAuthRoute from './components/PrivateRoutes/PrivateAuthRoute';
 import OnlyAdminPrivateRoute from './components/PrivateRoutes/OnlyAdminPrivateRoute';
 import UpdatePost from './pages/UpdatePost';
 import PostPage from './pages/PostPage';
+import Search from './pages/Search';
 
 const App = () => {
     return (
@@ -35,6 +36,7 @@ const App = () => {
                     </Route>
                     <Route path='/projects' element={<Projects />} />
                     <Route path='/post/:postSlug' element={<PostPage />} />
+                    <Route path='/search' element={<Search />} />
                 </Route>
             </Routes>
         </Router>
