@@ -92,6 +92,11 @@ const Header = () => {
                             <span className='block text-sm'>@{currentUser.userName}</span>
                             <span className='block text-sm font-medium'>{currentUser.email}</span>
                         </Dropdown.Header>
+                        {currentUser.isAdmin && (
+                            <Link to={'/dashboard'}>
+                                <Dropdown.Item>Dashboard</Dropdown.Item>
+                            </Link>
+                        )}
                         <Link to={'/dashboard?tab=profile'}>
                             <Dropdown.Item>Profile</Dropdown.Item>
                         </Link>
@@ -116,9 +121,6 @@ const Header = () => {
                 </Navbar.Link>
                 <Navbar.Link active={path === '/about'} as={'div'}>
                     <Link to={'/about'}>About</Link>
-                </Navbar.Link>
-                <Navbar.Link active={path === '/projects'} as={'div'}>
-                    <Link to={'/projects'}>Projects</Link>
                 </Navbar.Link>
             </Navbar.Collapse>
         </Navbar>

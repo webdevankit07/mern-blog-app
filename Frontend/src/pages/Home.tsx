@@ -5,8 +5,10 @@ import axios from 'axios';
 import { Post } from './PostPage';
 import { handleAxiosError } from '../utils/utils';
 import { Spinner } from 'flowbite-react';
+import { useAppSelector } from '../store/storeHooks';
 
 const Home = () => {
+    const { currentUser } = useAppSelector((state) => state.user);
     const [loading, setLoading] = useState<boolean>(true);
     const [posts, setPosts] = useState<Post[] | []>([]);
 
@@ -28,7 +30,9 @@ const Home = () => {
     return (
         <div>
             <div className='flex flex-col max-w-6xl gap-6 px-3 mx-auto p-28 '>
-                <h1 className='text-3xl font-bold lg:text-6xl'>Welcome to my Blog</h1>
+                <h1 className='text-3xl font-bold lg:text-6xl'>
+                    Welcome {currentUser?.userName === 'webdevankit07' ? 'to my Blog' : currentUser?.fullName}
+                </h1>
                 <p className='text-xs text-gray-500 sm:text-sm'>
                     Here you'll find a variety of articles and tutorials on topics such as web development, software
                     engineering, and programming languages.

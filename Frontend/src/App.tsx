@@ -1,12 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Pages...
-import Home from './pages/Home';
 import About from './pages/About';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
-import Projects from './pages/Projects';
 import Layout from './Layouts/Layout';
 import CreatePost from './pages/CreatePost';
 import PrivateRoute from './components/PrivateRoutes/PrivateRoute';
@@ -15,6 +13,7 @@ import OnlyAdminPrivateRoute from './components/PrivateRoutes/OnlyAdminPrivateRo
 import UpdatePost from './pages/UpdatePost';
 import PostPage from './pages/PostPage';
 import Search from './pages/Search';
+import Home from './pages/Home';
 
 const App = () => {
     return (
@@ -22,8 +21,6 @@ const App = () => {
             <Routes>
                 <Route element={<Layout />}>
                     <Route element={<PrivateRoute />}>
-                        <Route path='/' element={<Home />} />
-                        <Route path='/about' element={<About />} />
                         <Route path='/dashboard' element={<Dashboard />} />
                     </Route>
                     <Route element={<PrivateAuthRoute />}>
@@ -34,7 +31,8 @@ const App = () => {
                         <Route path='/create-post' element={<CreatePost />} />
                         <Route path='/update-post/:postId' element={<UpdatePost />} />
                     </Route>
-                    <Route path='/projects' element={<Projects />} />
+                    <Route path='/' element={<Home />} />
+                    <Route path='/about' element={<About />} />
                     <Route path='/post/:postSlug' element={<PostPage />} />
                     <Route path='/search' element={<Search />} />
                 </Route>
