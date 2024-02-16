@@ -14,6 +14,7 @@ import UpdatePost from './pages/UpdatePost';
 import PostPage from './pages/PostPage';
 import Search from './pages/Search';
 import Home from './pages/Home';
+import Error from './pages/Error';
 
 const App = () => {
     return (
@@ -35,6 +36,7 @@ const App = () => {
                     <Route path='/about' element={<About />} />
                     <Route path='/post/:postSlug' element={<PostPage />} />
                     <Route path='/search' element={<Search />} />
+                    <Route path='*' element={<Error />} />
                 </Route>
             </Routes>
         </Router>
