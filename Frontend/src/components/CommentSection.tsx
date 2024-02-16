@@ -43,7 +43,6 @@ const CommentSection = ({ postId }: PropsType) => {
             setComment('');
             setCommentError(null);
             setComments([data.data, ...comments]);
-            console.log(data.data);
         } catch (error) {
             const err = await handleAxiosError(error);
             setCommentError(err);

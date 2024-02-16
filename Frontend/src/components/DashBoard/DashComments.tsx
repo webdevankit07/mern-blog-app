@@ -4,36 +4,23 @@ import { useAppSelector } from '../../store/storeHooks';
 import { Button, Modal, Spinner, Table } from 'flowbite-react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { handleAxiosError } from '../../utils/utils';
-import { FaCheck } from 'react-icons/fa6';
-import { FaTimes } from 'react-icons/fa';
+import { CommentType } from '../CommentSection';
 
-type Users = {
-    _id: string;
-    fullName: string;
-    userName: string;
-    email: string;
-    profilePicture: string;
-    isAdmin: boolean;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-};
-
-const DashUsers = () => {
+const DashComments = () => {
     const { currentUser } = useAppSelector((state) => state.user);
     const [loading, setLoading] = useState<boolean>(true);
-    const [users, setUsers] = useState<Users[]>([]);
+    const [comments, setComments] = useState<CommentType[]>([]);
     const [showMore, setShowMore] = useState<boolean>(true);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [userIdToDelete, setUserIdToDelete] = useState<string | null>(null);
+    const [commentIdToDelete, setCommentIdToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`/api/v1/user/getusers`);
-                setUsers(data.data.users);
-                if (data.data.users.length < 9) {
+                const { data } = await axios(`/api/v1/comment/getAllComments`);
+                setComments(data.data.comments);
+                if (data.data.comments.length < 9) {
                     setShowMore(false);
                 } else {
                     setShowMore(true);
@@ -49,11 +36,11 @@ const DashUsers = () => {
     }, [currentUser?._id]);
 
     const handleShowMore = async () => {
-        const startIndex = users.length;
+        const startIndex = comments.length;
         try {
-            const { data } = await axios(`/api/v1/user/getusers?startIndex=${startIndex}`);
-            setUsers([...users, ...data.data.users]);
-            if (data.posts.length < 9) {
+            const { data } = await axios(`/api/v1/comment/getAllComments?startIndex=${startIndex}`);
+            setComments([...comments, ...data.data.comments]);
+            if (data.data.comments.length < 9) {
                 setShowMore(false);
             } else {
                 setShowMore(true);
@@ -65,11 +52,11 @@ const DashUsers = () => {
     };
 
     // Delete User..
-    const handleDeleteUser = async () => {
+    const handleDeleteComment = async () => {
         setShowModal(false);
         try {
-            await axios.delete(`/api/v1/user/delete/${userIdToDelete}`);
-            setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
+            await axios.delete(`/api/v1/comment/delete-comment/${commentIdToDelete}`);
+            setComments((prev) => prev.filter((comment) => comment._id !== commentIdToDelete));
         } catch (error) {
             const err = await handleAxiosError(error);
             console.log(err);
@@ -86,43 +73,34 @@ const DashUsers = () => {
 
     return (
         <div className='p-3 overflow-x-scroll table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
-            {currentUser?.isAdmin && users && users.length > 0 ? (
+            {currentUser?.isAdmin && comments?.length > 0 ? (
                 <>
                     <Table hoverable className='shadow-md'>
-                        <Table.Head>
+                        <Table.Head className='[&>*]:text-center'>
                             <Table.HeadCell>Date updated</Table.HeadCell>
-                            <Table.HeadCell>User image</Table.HeadCell>
-                            <Table.HeadCell>Username</Table.HeadCell>
-                            <Table.HeadCell>Email</Table.HeadCell>
-                            <Table.HeadCell>Admin</Table.HeadCell>
+                            <Table.HeadCell>Comment content</Table.HeadCell>
+                            <Table.HeadCell>Number of likes</Table.HeadCell>
+                            <Table.HeadCell>PostId</Table.HeadCell>
+                            <Table.HeadCell>UserId</Table.HeadCell>
                             <Table.HeadCell>Delete</Table.HeadCell>
                         </Table.Head>
                         <Table.Body className='divide-y'>
-                            {users.map((user) => (
-                                <Table.Row key={user._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
-                                    <Table.Cell>{new Date(user.createdAt).toLocaleDateString()}</Table.Cell>
-                                    <Table.Cell>
-                                        <img
-                                            src={user.profilePicture}
-                                            alt={user.userName}
-                                            className='object-cover w-10 h-10 bg-gray-500 rounded-full'
-                                        />
-                                    </Table.Cell>
-                                    <Table.Cell>{user.userName}</Table.Cell>
-                                    <Table.Cell>{user.email}</Table.Cell>
-                                    <Table.Cell>
-                                        {user.isAdmin ? (
-                                            <FaCheck className='text-green-400' />
-                                        ) : (
-                                            <FaTimes className='text-red-500' />
-                                        )}
-                                    </Table.Cell>
+                            {comments.map((comment) => (
+                                <Table.Row
+                                    key={comment._id}
+                                    className='bg-white dark:border-gray-700 dark:bg-gray-800 [&>*]:text-center'
+                                >
+                                    <Table.Cell>{new Date(comment.updatedAt).toLocaleDateString()}</Table.Cell>
+                                    <Table.Cell>{comment.content}</Table.Cell>
+                                    <Table.Cell>{comment.numberOfLikes}</Table.Cell>
+                                    <Table.Cell>{comment.postId}</Table.Cell>
+                                    <Table.Cell>{comment.userId}</Table.Cell>
                                     <Table.Cell>
                                         <span
                                             className='font-medium text-red-500 cursor-pointer hover:underline'
                                             onClick={() => {
                                                 setShowModal(true);
-                                                setUserIdToDelete(user._id);
+                                                setCommentIdToDelete(comment._id);
                                             }}
                                         >
                                             Delete
@@ -139,7 +117,7 @@ const DashUsers = () => {
                     )}
                 </>
             ) : (
-                <p>You have no users yet!</p>
+                <p>You have no comments yet!</p>
             )}
             <Modal show={showModal} onClose={() => setShowModal(false)} popup size={'md'}>
                 <Modal.Header />
@@ -159,7 +137,7 @@ const DashUsers = () => {
                             >
                                 No, cancle
                             </Button>
-                            <Button color='failure' onClick={handleDeleteUser}>
+                            <Button color='failure' onClick={handleDeleteComment}>
                                 Yes, I'm sure
                             </Button>
                         </div>
@@ -170,4 +148,4 @@ const DashUsers = () => {
     );
 };
 
-export default DashUsers;
+export default DashComments;

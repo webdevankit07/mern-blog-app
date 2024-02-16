@@ -55,7 +55,12 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
 
     if (user) {
         user.fullName = name;
-        user.profilePicture = googlePhotoUrl;
+        if (
+            user.profilePicture ===
+            'https://lh3.googleusercontent.com/a/ACg8ocLdTdZtDEscAdPMDXdbDeSaCRX8SEziDhgiN_ZxpZFm=s96-c'
+        ) {
+            user.profilePicture = googlePhotoUrl;
+        }
         await user.save();
 
         const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Sidebar } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import { HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
+import { HiAnnotation, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
 import { deleteUserFailure, signoutUserSuccess } from '../../store/features/user/userSlice';
@@ -67,6 +67,18 @@ const DashSidebar = () => {
                                 as='div'
                             >
                                 Users
+                            </Sidebar.Item>
+                        </Link>
+                    )}
+                    {currentUser?.isAdmin && (
+                        <Link to={`/dashboard?tab=comments`}>
+                            <Sidebar.Item
+                                active={tab === 'comments'}
+                                icon={HiAnnotation}
+                                className='cursor-pointer'
+                                as='div'
+                            >
+                                Comments
                             </Sidebar.Item>
                         </Link>
                     )}

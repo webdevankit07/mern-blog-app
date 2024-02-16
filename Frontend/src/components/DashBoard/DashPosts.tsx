@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/storeHooks';
-import { Button, Modal, Table } from 'flowbite-react';
+import { Button, Modal, Spinner, Table } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { handleAxiosError } from '../../utils/utils';
@@ -21,6 +21,7 @@ type Post = {
 
 const DashPosts = () => {
     const { currentUser } = useAppSelector((state) => state.user);
+    const [loading, setLoading] = useState<boolean>(true);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [showMore, setShowMore] = useState<boolean>(true);
     const [pageNo, setPageNo] = useState<number>(1);
@@ -29,6 +30,7 @@ const DashPosts = () => {
 
     useEffect(() => {
         const fetchPosts = async () => {
+            setLoading(true);
             try {
                 const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}`);
                 setUserPosts(data.posts);
@@ -37,9 +39,11 @@ const DashPosts = () => {
                 } else {
                     setShowMore(true);
                 }
+                setLoading(false);
             } catch (error) {
                 const err = await handleAxiosError(error);
                 console.log(err);
+                setLoading(false);
             }
         };
         setPageNo((prev) => prev + 1);
@@ -73,6 +77,14 @@ const DashPosts = () => {
             console.log(err);
         }
     };
+
+    if (loading) {
+        return (
+            <div className='grid w-full min-h-screen place-content-center'>
+                <Spinner size={'xl'} />
+            </div>
+        );
+    }
 
     return (
         <div className='p-3 overflow-x-scroll table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>

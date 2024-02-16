@@ -4,6 +4,7 @@ import {
     createComment,
     deleteComment,
     editComment,
+    getAllComments,
     getPostComments,
     likeComment,
 } from '../controllers/comment.controller.js';
@@ -20,5 +21,6 @@ router.route('/create').post(verifyToken, validate(createCommentSchema), createC
 router.route('/like-comment/:commentId').put(verifyToken, likeComment);
 router.route('/edit-comment/:commentId').put(verifyToken, editComment);
 router.route('/delete-comment/:commentId').delete(verifyToken, deleteComment);
+router.route('/getAllComments').get(verifyToken, getAllComments);
 
 export { router as commentRoutes };
