@@ -1,12 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import path from 'path';
+// import path from 'path';
 // import { fileURLToPath } from 'url';
 import { authRoutes } from './routes/auth.routes.js';
 import { userRoutes } from './routes/user.routes.js';
 import { postRoutes } from './routes/post.routes.js';
 import { commentRoutes } from './routes/comment.routes.js';
+import globalErrorHandler from './middlewares/globalErrorHandler.middleware.js';
+import customError from './utils/customErrorHandler.js';
 
 const app = express();
 
@@ -34,5 +36,13 @@ app.use('/api/v1/comment', commentRoutes);
 app.get('/', (req, res) => {
     res.send('Welcome to mern blog api');
 });
+
+// error handling for unhandled routes....
+app.all('*', (req, _, next) => {
+    return next(new customError(404, `can't find ${req.originalUrl} on the server`));
+});
+
+// global error handler middleware...
+app.use(globalErrorHandler);
 
 export default app;
