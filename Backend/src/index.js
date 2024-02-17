@@ -4,14 +4,20 @@ import app from './app.js';
 import connectDB from './db/connectDB.js';
 import customError from './utils/customErrorHandler.js';
 import globalErrorHandler from './middlewares/globalErrorHandler.middleware.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// import path from 'path';
+// import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// // error handling for unhandled routes....
+// app.all('*', (req, res, next) => {
+//     res.sendFile(path.join(__dirname, '../../Frontend', 'dist', 'index.html'));
+// });
+
 // error handling for unhandled routes....
-app.all('*', (req, res, next) => {
-    res.sendFile(path.join(__dirname, '../../Frontend', 'dist', 'index.html'));
+app.all('*', (req, _, next) => {
+    return next(new customError(404, `can't find ${req.originalUrl} on the server`));
 });
 
 // global error handler middleware...

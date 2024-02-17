@@ -6,7 +6,6 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                // target: 'https://webdevankit-blog-app.vercel.app',
                 target: 'http://localhost:8000',
                 secure: false,
             },
