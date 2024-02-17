@@ -27,7 +27,7 @@ const DashBoardComp = () => {
         if (currentUser?.isAdmin) {
             (async () => {
                 try {
-                    const { data } = await axios('/api/v1/user/getusers?limit=5');
+                    const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}user/getusers?limit=5`);
                     setUsers(data.data.users);
                     setTotalUsers(data.data.totalUsers);
                     setLastMonthUsers(data.data.lastMonthUsers);
@@ -38,7 +38,7 @@ const DashBoardComp = () => {
             })();
             (async () => {
                 try {
-                    const { data } = await axios('/api/v1/post/getposts?limit=5');
+                    const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}post/getposts?limit=5`);
                     setPosts(data.data.posts);
                     setTotalPosts(data.data.totalPosts);
                     setLastMonthPosts(data.data.lastMonthPosts);
@@ -49,7 +49,7 @@ const DashBoardComp = () => {
             })();
             (async () => {
                 try {
-                    const { data } = await axios('/api/v1/comment/getAllComments?limit=5');
+                    const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}comment/getAllComments?limit=5`);
                     setComments(data.data.comments);
                     setTotalComments(data.data.totalComments);
                     setLastMonthComments(data.data.lastMonthComments);

@@ -18,7 +18,7 @@ const DashComments = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`/api/v1/comment/getAllComments`);
+                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}comment/getAllComments`);
                 setComments(data.data.comments);
                 if (data.data.comments.length < 9) {
                     setShowMore(false);
@@ -38,7 +38,9 @@ const DashComments = () => {
     const handleShowMore = async () => {
         const startIndex = comments.length;
         try {
-            const { data } = await axios(`/api/v1/comment/getAllComments?startIndex=${startIndex}`);
+            const { data } = await axios(
+                `${import.meta.env.VITE_API_BASE_URL}comment/getAllComments?startIndex=${startIndex}`
+            );
             setComments([...comments, ...data.data.comments]);
             if (data.data.comments.length < 9) {
                 setShowMore(false);
@@ -55,7 +57,7 @@ const DashComments = () => {
     const handleDeleteComment = async () => {
         setShowModal(false);
         try {
-            await axios.delete(`/api/v1/comment/delete-comment/${commentIdToDelete}`);
+            await axios.delete(`${import.meta.env.VITE_API_BASE_URL}comment/delete-comment/${commentIdToDelete}`);
             setComments((prev) => prev.filter((comment) => comment._id !== commentIdToDelete));
         } catch (error) {
             const err = await handleAxiosError(error);

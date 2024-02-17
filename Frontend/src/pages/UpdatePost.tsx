@@ -32,7 +32,7 @@ const UpdatePost = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios(`/api/v1/post/getposts?postId=${postId}`);
+                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}post/getposts?postId=${postId}`);
                 setFormData(data.posts[0]);
                 setPublishError(undefined);
             } catch (error) {
@@ -82,7 +82,10 @@ const UpdatePost = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data } = await axios.put(`/api/v1/post/updatepost/${postId}/${currentUser?._id}`, formData);
+            const { data } = await axios.put(
+                `${import.meta.env.VITE_API_BASE_URL}post/updatepost/${postId}/${currentUser?._id}`,
+                formData
+            );
             navigate(`/post/${data.data.slug}`);
         } catch (error) {
             const err = await handleAxiosError(error);

@@ -31,7 +31,7 @@ const DashUsers = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`/api/v1/user/getusers`);
+                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}user/getusers`);
                 setUsers(data.data.users);
                 if (data.data.users.length < 9) {
                     setShowMore(false);
@@ -51,7 +51,7 @@ const DashUsers = () => {
     const handleShowMore = async () => {
         const startIndex = users.length;
         try {
-            const { data } = await axios(`/api/v1/user/getusers?startIndex=${startIndex}`);
+            const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}user/getusers?startIndex=${startIndex}`);
             setUsers([...users, ...data.data.users]);
             if (data.posts.length < 9) {
                 setShowMore(false);
@@ -68,7 +68,7 @@ const DashUsers = () => {
     const handleDeleteUser = async () => {
         setShowModal(false);
         try {
-            await axios.delete(`/api/v1/user/delete/${userIdToDelete}`);
+            await axios.delete(`${import.meta.env.VITE_API_BASE_URL}user/delete/${userIdToDelete}`);
             setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
         } catch (error) {
             const err = await handleAxiosError(error);

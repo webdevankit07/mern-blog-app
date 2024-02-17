@@ -69,7 +69,7 @@ const CreatePost = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post('/api/v1/post/create', formData);
+            const { data } = await axios.post(`${import.meta.env.VITE_API_BASE_URL}post/create`, formData);
             navigate(`/post/${data.data.post.slug}`);
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {

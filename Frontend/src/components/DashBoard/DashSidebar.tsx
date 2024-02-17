@@ -22,7 +22,7 @@ const DashSidebar = () => {
     // SignOut User....*:
     const handleSignout = async () => {
         try {
-            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/logout/${currentUser?._id}`);
             dispatch(signoutUserSuccess());
         } catch (error) {
             const err = await handleAxiosError(error);

@@ -118,7 +118,10 @@ const DashProfile = () => {
                 return dispatch(setUserError('No changes made in profile'));
             }
 
-            const { data } = await axios.put(`/api/v1/user/update/${currentUser?._id}`, formData);
+            const { data } = await axios.put(
+                `${import.meta.env.VITE_API_BASE_URL}user/update/${currentUser?._id}`,
+                formData
+            );
             dispatch(updateUserSuccess(data.data.updatedUser));
             setImageFileUploadingProgress(null);
             setUpdateSuccess('user updated successfully.');
