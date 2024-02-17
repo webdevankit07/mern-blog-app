@@ -6,8 +6,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "nodemon src/index.js",
-        "start": "node src/index.js",
-        "build": "npm install && cd ../Frontend && npm install && npm run build"
+        "start": "node src/index.js"
     },
     "keywords": [
         "javascript",

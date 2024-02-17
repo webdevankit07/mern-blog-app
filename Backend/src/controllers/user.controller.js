@@ -92,7 +92,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
     }
 });
 
-export const logoutUser = asyncHandler(async (req, res) => {
+export const logoutUser = asyncHandler(async (req, res, next) => {
     if (req.user.id !== req.params.userId) {
         return next(new customError(403, 'You are not allowed to logout this user'));
     }
