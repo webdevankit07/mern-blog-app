@@ -13,7 +13,7 @@ import customError from './utils/customErrorHandler.js';
 const app = express();
 
 const corsConfig = {
-    origin: '*',
+    origin: 'https://webdev-ankit-blog-app.vercel.app/',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 };
