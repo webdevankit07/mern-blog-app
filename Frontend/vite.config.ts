@@ -6,6 +6,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
+                // target: 'https://webdev-ankit-mern-blog-api.vercel.app',
                 target: 'http://localhost:8000',
                 secure: false,
             },
