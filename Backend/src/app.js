@@ -12,13 +12,12 @@ import customError from './utils/customErrorHandler.js';
 
 const app = express();
 
-const corsConfig = {
-    origin: '*',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-};
-app.use(cors(corsConfig));
-app.options('', cors(corsConfig));
+app.use(
+    cors({
+        origin: '*',
+        credentials: true,
+    })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
