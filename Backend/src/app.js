@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+// import path from 'path';
+// import { fileURLToPath } from 'url';
 import { authRoutes } from './routes/auth.routes.js';
 import { userRoutes } from './routes/user.routes.js';
 import { postRoutes } from './routes/post.routes.js';
@@ -10,11 +12,19 @@ import customError from './utils/customErrorHandler.js';
 
 const app = express();
 
+const corsConfig = {
+    origin: 'https://webdev-ankit-blog-app.vercel.app/',
+    credentials: true,
+};
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// app.use(express.static(path.join(__dirname, '../../Frontend/dist')));
 
 // Routes declaration...
 app.use('/api/v1/auth', authRoutes);
@@ -23,7 +33,7 @@ app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/comment', commentRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Welcome to MERN Blog API');
+    res.send('Welcome to mern blog api');
 });
 
 // error handling for unhandled routes....
