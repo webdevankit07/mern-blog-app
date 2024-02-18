@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { CommentType } from './CommentSection';
 import { handleAxiosError } from '../utils/utils';
-import axios from 'axios';
 import moment from 'moment';
 import { Button, Textarea } from 'flowbite-react';
 import { useAppSelector } from '../store/storeHooks';
 import { FaThumbsUp } from 'react-icons/fa';
+import { Axios } from '../config/api';
 
 type PropsType = {
     comment: CommentType;
@@ -34,7 +34,7 @@ const Comment = ({ comment, onLike, onEdit, onDelete }: PropsType) => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios(`/api/v1/user/getuser/${comment.userId}`);
+                const { data } = await Axios(`/user/getuser/${comment.userId}`);
                 setUser(data.data);
             } catch (error) {
                 const err = await handleAxiosError(error);
@@ -52,7 +52,7 @@ const Comment = ({ comment, onLike, onEdit, onDelete }: PropsType) => {
     // handleSave function....*:
     const handleSave = async () => {
         try {
-            await axios.put(`/api/v1/comment/edit-comment/${comment._id}`, { content: editedContent });
+            await Axios.put(`/comment/edit-comment/${comment._id}`, { content: editedContent });
             setIsEditing(false);
             onEdit(comment._id, editedContent);
         } catch (error) {

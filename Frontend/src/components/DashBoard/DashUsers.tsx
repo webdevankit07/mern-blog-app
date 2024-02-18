@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/storeHooks';
 import { Button, Modal, Spinner, Table } from 'flowbite-react';
@@ -6,6 +5,7 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { handleAxiosError } from '../../utils/utils';
 import { FaCheck } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
+import { Axios } from '../../config/api';
 
 export type UserType = {
     _id: string;
@@ -31,7 +31,7 @@ const DashUsers = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`/api/v1/user/getusers`);
+                const { data } = await Axios(`/user/getusers`);
                 setUsers(data.data.users);
                 if (data.data.users.length < 9) {
                     setShowMore(false);
@@ -51,7 +51,7 @@ const DashUsers = () => {
     const handleShowMore = async () => {
         const startIndex = users.length;
         try {
-            const { data } = await axios(`/api/v1/user/getusers?startIndex=${startIndex}`);
+            const { data } = await Axios(`/user/getusers?startIndex=${startIndex}`);
             setUsers([...users, ...data.data.users]);
             if (data.posts.length < 9) {
                 setShowMore(false);
@@ -68,7 +68,7 @@ const DashUsers = () => {
     const handleDeleteUser = async () => {
         setShowModal(false);
         try {
-            await axios.delete(`/api/v1/user/delete/${userIdToDelete}`);
+            await Axios.delete(`/user/delete/${userIdToDelete}`);
             setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
         } catch (error) {
             const err = await handleAxiosError(error);

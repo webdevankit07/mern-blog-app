@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 // React Icons...
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import OAuth from '../components/OAuth';
+import { Axios } from '../config/api';
 
 type SignUpFormData = {
     fullName: string;
@@ -38,7 +39,7 @@ const Signup = () => {
         setIsLoading(true);
         try {
             // setError(undefined);
-            await axios.post('/api/v1/auth/register', formData);
+            await Axios.post(`/auth/register`, formData);
             setIsLoading(false);
             navigate('/sign-in');
         } catch (error) {

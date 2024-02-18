@@ -19,12 +19,14 @@ export const generateAccessAndRefreshToken = async (userId) => {
 
 export const accessTokenOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+    secure: true,
     maxAge: 86400000,
 };
 
 export const refreshTokenOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+    secure: true,
     maxAge: 864000000,
 };

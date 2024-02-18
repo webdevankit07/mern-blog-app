@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInFailure, signInStart, signInSuccess } from '../store/features/user/userSlice';
@@ -9,6 +9,7 @@ import { signInFailure, signInStart, signInSuccess } from '../store/features/use
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import OAuth from '../components/OAuth';
+import { Axios } from '../config/api';
 
 type SignInFormData = {
     fullName: string;
@@ -30,23 +31,15 @@ const Signin = () => {
     const dispatch = useAppDispatch();
     const {
         register,
-        formState: { errors, isSubmitSuccessful },
+        formState: { errors },
         handleSubmit,
-        reset,
     } = useForm<SignInFormData>();
-
-    // Form reset.....*;
-    useEffect(() => {
-        if (isSubmitSuccessful) {
-            reset();
-        }
-    }, [isSubmitSuccessful, reset]);
 
     //Form Submit.....*;
     const handleFormSubmit = async (formData: SignInFormData) => {
         try {
             dispatch(signInStart());
-            const { data } = await axios.post('/api/v1/auth/login', formData);
+            const { data } = await Axios.post(`/auth/login`, formData);
             dispatch(signInSuccess(data.data.user));
             navigate('/');
         } catch (error) {

@@ -8,6 +8,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import ShowAlert from '../components/showAlert';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Axios } from '../config/api';
 
 type FormData = {
     title?: string;
@@ -69,7 +70,7 @@ const CreatePost = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post('/api/v1/post/create', formData);
+            const { data } = await Axios.post(`/post/create`, formData);
             navigate(`/post/${data.data.post.slug}`);
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {

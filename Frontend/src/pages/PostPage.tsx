@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { handleAxiosError } from '../utils/utils';
-import axios from 'axios';
 import { Button, Spinner } from 'flowbite-react';
 import CommentSection from '../components/CommentSection';
 import PostCard from '../components/PostCard';
+import { apiBaseUrl } from '../config';
+import { Axios } from '../config/api';
 
 export type Post = {
     _id: string;
@@ -29,7 +30,7 @@ const PostPage = () => {
         (async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`/api/v1/post/getposts?slug=${postSlug}`);
+                const { data } = await Axios(`/post/getposts?slug=${postSlug}`);
                 setPost(data.data.posts[0]);
                 setLoading(false);
             } catch (error) {
@@ -43,7 +44,7 @@ const PostPage = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios(`/api/v1/post/getposts?limit=3`);
+                const { data } = await Axios(`${apiBaseUrl}/post/getposts?limit=3`);
                 setRecentPosts(data.data.posts);
             } catch (error) {
                 const err = handleAxiosError(error);

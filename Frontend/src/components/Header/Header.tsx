@@ -7,13 +7,9 @@ import { FaMoon, FaSun } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
 import { toggleTheme } from '../../store/features/theme/themeSlice';
 import { deleteUserFailure, signoutUserSuccess } from '../../store/features/user/userSlice';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-
-interface ValidationError {
-    message: string;
-    errors: Record<string, string[]>;
-}
+import { handleAxiosError } from '../../utils/utils';
+import { Axios } from '../../config/api';
 
 const Header = () => {
     const { theme } = useAppSelector((state) => state.theme);
@@ -35,17 +31,11 @@ const Header = () => {
     // SignOut User....*:
     const handleSignout = async () => {
         try {
-            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
+            await Axios.post(`/user/logout/${currentUser?._id}`);
             dispatch(signoutUserSuccess());
         } catch (error) {
-            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                console.log(error.response?.data.message);
-                dispatch(deleteUserFailure(error.response?.data.message));
-            } else {
-                const err = error as Error;
-                console.log(err);
-                dispatch(deleteUserFailure(err.message));
-            }
+            const err = await handleAxiosError(error);
+            dispatch(deleteUserFailure(err));
         }
     };
 

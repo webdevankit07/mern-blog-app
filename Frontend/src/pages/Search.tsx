@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import { Post } from './PostPage';
 import { handleAxiosError } from '../utils/utils';
-import axios from 'axios';
+import { Axios } from '../config/api';
 
 type SidebarDataType = {
     searchTerm: string;
@@ -39,18 +39,18 @@ const Search = () => {
         }
 
         (async () => {
+            setLoading(true);
             try {
-                setLoading(true);
                 const searchQuery = urlParams.toString();
-                const { data } = await axios(`/api/v1/post/getposts?${searchQuery}`);
+                const { data } = await Axios(`/post/getposts?${searchQuery}`);
 
                 setPosts(data.data.posts);
-                setLoading(false);
                 if (data.data.posts.length === 9) {
                     setShowMore(true);
                 } else {
                     setShowMore(false);
                 }
+                setLoading(false);
             } catch (error) {
                 const err = await handleAxiosError(error);
                 console.log(err);
@@ -90,7 +90,7 @@ const Search = () => {
         urlParams.set('startIndex', startIndex.toString());
         const searchQuery = urlParams.toString();
         try {
-            const { data } = await axios(`/api/v1/post/getposts?${searchQuery}`);
+            const { data } = await Axios(`/post/getposts?${searchQuery}`);
             setPosts([...posts, ...data.data.posts]);
             if (data.data.posts.length === 9) {
                 setShowMore(true);

@@ -8,12 +8,16 @@ import { commentRoutes } from './routes/comment.routes.js';
 
 const app = express();
 
-app.use(
-    cors({
-        origin: 'http://localhost:5173',
-        credentials: true,
-    })
-);
+const corsOptions = {
+    origin: `http://localhost:5173`,
+    credentials: true,
+    optionSuccessStatus: 200,
+    Headers: true,
+    exposedHeaders: 'Set-Cookie',
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Access-Control-Allow-Origin', 'Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));

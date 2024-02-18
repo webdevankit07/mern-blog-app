@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Sidebar } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { HiAnnotation, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
@@ -6,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
 import { deleteUserFailure, signoutUserSuccess } from '../../store/features/user/userSlice';
 import { handleAxiosError } from '../../utils/utils';
+import { Axios } from '../../config/api';
 
 const DashSidebar = () => {
     const { currentUser } = useAppSelector((state) => state.user);
@@ -22,7 +22,7 @@ const DashSidebar = () => {
     // SignOut User....*:
     const handleSignout = async () => {
         try {
-            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
+            await Axios.post(`/user/logout/${currentUser?._id}`);
             dispatch(signoutUserSuccess());
         } catch (error) {
             const err = await handleAxiosError(error);

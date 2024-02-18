@@ -14,20 +14,16 @@ import {
     signoutUserSuccess,
 } from '../../store/features/user/userSlice';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import axios from 'axios';
 import { useAppDispatch } from '../../store/storeHooks';
 import { Link } from 'react-router-dom';
+import { handleAxiosError } from '../../utils/utils';
+import { Axios } from '../../config/api';
 
 type PropsType = {
     register: UseFormRegister<profileFormData>;
     currentUser: currentUser | null;
     loading: boolean;
 };
-
-interface ValidationError {
-    message: string;
-    errors: Record<string, string[]>;
-}
 
 const ProfileForm = ({ register, currentUser, loading }: PropsType) => {
     const [isUsernameDisabled, setIsUsernameDisabled] = useState<boolean>(true);
@@ -42,17 +38,11 @@ const ProfileForm = ({ register, currentUser, loading }: PropsType) => {
         setShowModal(false);
         dispatch(deleteUserStart());
         try {
-            await axios.delete(`/api/v1/user/delete/${currentUser?._id}`);
+            await Axios.delete(`/user/delete/${currentUser?._id}`);
             dispatch(deleteUserSuccess());
         } catch (error) {
-            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                console.log(error.response?.data.message);
-                dispatch(deleteUserFailure(error.response?.data.message));
-            } else {
-                const err = error as Error;
-                console.log(err);
-                dispatch(deleteUserFailure(err.message));
-            }
+            const err = await handleAxiosError(error);
+            dispatch(deleteUserFailure(err));
         }
     };
 
@@ -60,17 +50,11 @@ const ProfileForm = ({ register, currentUser, loading }: PropsType) => {
     const handleSignout = async () => {
         setShowModal(false);
         try {
-            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
+            await Axios.post(`/user/logout/${currentUser?._id}`);
             dispatch(signoutUserSuccess());
         } catch (error) {
-            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                console.log(error.response?.data.message);
-                dispatch(deleteUserFailure(error.response?.data.message));
-            } else {
-                const err = error as Error;
-                console.log(err);
-                dispatch(deleteUserFailure(err.message));
-            }
+            const err = await handleAxiosError(error);
+            dispatch(deleteUserFailure(err));
         }
     };
 

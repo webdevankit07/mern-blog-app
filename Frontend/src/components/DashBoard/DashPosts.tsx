@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/storeHooks';
 import { Button, Modal, Spinner, Table } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { handleAxiosError } from '../../utils/utils';
+import { Axios } from '../../config/api';
 
 type Post = {
     _id: string;
@@ -32,7 +32,7 @@ const DashPosts = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}`);
+                const { data } = await Axios(`/post/getposts?userId=${currentUser?._id}`);
                 setUserPosts(data.data.posts);
                 if (data.data.posts.length < 9) {
                     setShowMore(false);
@@ -53,7 +53,7 @@ const DashPosts = () => {
     const handleShowMore = async () => {
         try {
             setPageNo((prev) => prev + 1);
-            const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}&page=${pageNo}`);
+            const { data } = await Axios(`/post/getposts?userId=${currentUser?._id}&page=${pageNo}`);
             setUserPosts([...userPosts, ...data.posts]);
             if (data.posts.length < 9) {
                 setShowMore(false);
@@ -70,7 +70,7 @@ const DashPosts = () => {
     const handleDeletePost = async () => {
         setShowModal(false);
         try {
-            await axios.delete(`/api/v1/post/deletepost/${postId}/${currentUser?._id}`);
+            await Axios.delete(`/post/deletepost/${postId}/${currentUser?._id}`);
             setUserPosts((prev) => prev.filter((post) => post._id !== postId));
         } catch (error) {
             const err = await handleAxiosError(error);

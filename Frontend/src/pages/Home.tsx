@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import PostCard from '../components/PostCard';
-import axios from 'axios';
 import { Post } from './PostPage';
 import { handleAxiosError } from '../utils/utils';
 import { Spinner } from 'flowbite-react';
 import { useAppSelector } from '../store/storeHooks';
+import { Axios } from '../config/api';
 
 const Home = () => {
     const { currentUser } = useAppSelector((state) => state.user);
@@ -16,7 +16,7 @@ const Home = () => {
         (async () => {
             setLoading(true);
             try {
-                const { data } = await axios('/api/v1/post/getPosts');
+                const { data } = await Axios(`/post/getPosts`);
                 setPosts(data.data.posts);
                 setLoading(false);
             } catch (error) {

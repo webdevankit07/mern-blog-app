@@ -15,6 +15,7 @@ import {
     updateUserSuccess,
 } from '../../store/features/user/userSlice';
 import ShowAlert from '../showAlert';
+import { Axios } from '../../config/api';
 
 export type profileFormData = {
     userName: string | null;
@@ -118,7 +119,7 @@ const DashProfile = () => {
                 return dispatch(setUserError('No changes made in profile'));
             }
 
-            const { data } = await axios.put(`/api/v1/user/update/${currentUser?._id}`, formData);
+            const { data } = await Axios.put(`/user/update/${currentUser?._id}`, formData);
             dispatch(updateUserSuccess(data.data.updatedUser));
             setImageFileUploadingProgress(null);
             setUpdateSuccess('user updated successfully.');

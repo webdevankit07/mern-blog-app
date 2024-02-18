@@ -39,6 +39,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(validUser._id);
     const user = await User.findById(validUser._id).select('-password -refreshToken');
+    console.log({ user, accessToken, refreshToken });
 
     // Response...
     return res

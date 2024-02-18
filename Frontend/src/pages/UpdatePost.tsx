@@ -6,10 +6,10 @@ import { firebaseStorage } from '../firebase';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import 'react-circular-progressbar/dist/styles.css';
 import ShowAlert from '../components/showAlert';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { handleAxiosError } from '../utils/utils';
 import { useAppSelector } from '../store/storeHooks';
+import { Axios } from '../config/api';
 
 type FormData = {
     title?: string;
@@ -32,7 +32,7 @@ const UpdatePost = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios(`/api/v1/post/getposts?postId=${postId}`);
+                const { data } = await Axios(`/post/getposts?postId=${postId}`);
                 setFormData(data.posts[0]);
                 setPublishError(undefined);
             } catch (error) {
@@ -58,6 +58,7 @@ const UpdatePost = () => {
                     const progress = parseInt(((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(0));
                     setImageFileUploadingProgress(progress);
                 },
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 (_err) => {
                     setImageFileUploadError(`Image upload failed`);
                     setImageFileUploadingProgress(null);
@@ -82,7 +83,7 @@ const UpdatePost = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data } = await axios.put(`/api/v1/post/updatepost/${postId}/${currentUser?._id}`, formData);
+            const { data } = await Axios.put(`/post/updatepost/${postId}/${currentUser?._id}`, formData);
             navigate(`/post/${data.data.slug}`);
         } catch (error) {
             const err = await handleAxiosError(error);
