@@ -42,7 +42,7 @@ const ProfileForm = ({ register, currentUser, loading }: PropsType) => {
         setShowModal(false);
         dispatch(deleteUserStart());
         try {
-            await axios.delete(`${import.meta.env.VITE_API_BASE_URL}user/delete/${currentUser?._id}`);
+            await axios.delete(`/api/v1/user/delete/${currentUser?._id}`);
             dispatch(deleteUserSuccess());
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
@@ -60,7 +60,7 @@ const ProfileForm = ({ register, currentUser, loading }: PropsType) => {
     const handleSignout = async () => {
         setShowModal(false);
         try {
-            await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/logout/${currentUser?._id}`);
+            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
             dispatch(signoutUserSuccess());
         } catch (error) {
             if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {

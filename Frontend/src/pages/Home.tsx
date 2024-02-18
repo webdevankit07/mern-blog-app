@@ -6,7 +6,6 @@ import { Post } from './PostPage';
 import { handleAxiosError } from '../utils/utils';
 import { Spinner } from 'flowbite-react';
 import { useAppSelector } from '../store/storeHooks';
-import { fetchData } from '../api/api';
 
 const Home = () => {
     const { currentUser } = useAppSelector((state) => state.user);
@@ -17,7 +16,7 @@ const Home = () => {
         (async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}post/getposts`);
+                const { data } = await axios(`https://webdev-ankit-blog-api.up.railway.app/api/v1/post/getposts`);
                 setPosts(data.data.posts);
                 setLoading(false);
             } catch (error) {

@@ -32,9 +32,7 @@ const DashPosts = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const { data } = await axios(
-                    `${import.meta.env.VITE_API_BASE_URL}post/getposts?userId=${currentUser?._id}`
-                );
+                const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}`);
                 setUserPosts(data.data.posts);
                 if (data.data.posts.length < 9) {
                     setShowMore(false);
@@ -55,9 +53,7 @@ const DashPosts = () => {
     const handleShowMore = async () => {
         try {
             setPageNo((prev) => prev + 1);
-            const { data } = await axios(
-                `${import.meta.env.VITE_API_BASE_URL}post/getposts?userId=${currentUser?._id}&page=${pageNo}`
-            );
+            const { data } = await axios(`/api/v1/post/getposts?userId=${currentUser?._id}&page=${pageNo}`);
             setUserPosts([...userPosts, ...data.posts]);
             if (data.posts.length < 9) {
                 setShowMore(false);
@@ -74,7 +70,7 @@ const DashPosts = () => {
     const handleDeletePost = async () => {
         setShowModal(false);
         try {
-            await axios.delete(`${import.meta.env.VITE_API_BASE_URL}post/deletepost/${postId}/${currentUser?._id}`);
+            await axios.delete(`/api/v1/post/deletepost/${postId}/${currentUser?._id}`);
             setUserPosts((prev) => prev.filter((post) => post._id !== postId));
         } catch (error) {
             const err = await handleAxiosError(error);

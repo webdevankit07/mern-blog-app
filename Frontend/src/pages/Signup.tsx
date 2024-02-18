@@ -38,7 +38,7 @@ const Signup = () => {
         setIsLoading(true);
         try {
             // setError(undefined);
-            await axios.post(`${import.meta.env.VITE_API_BASE_URL}auth/register`, formData);
+            await axios.post('/api/v1/auth/register', formData);
             setIsLoading(false);
             navigate('/sign-in');
         } catch (error) {

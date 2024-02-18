@@ -29,11 +29,11 @@ const PostPage = () => {
         (async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}post/getposts?slug=${postSlug}`);
+                const { data } = await axios(`/api/v1/post/getposts?slug=${postSlug}`);
                 setPost(data.data.posts[0]);
                 setLoading(false);
             } catch (error) {
-                const err = await handleAxiosError(error);
+                const err = handleAxiosError(error);
                 setLoading(false);
                 console.log(err);
             }
@@ -43,10 +43,10 @@ const PostPage = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}post/getposts?limit=3`);
+                const { data } = await axios(`/api/v1/post/getposts?limit=3`);
                 setRecentPosts(data.data.posts);
             } catch (error) {
-                const err = await handleAxiosError(error);
+                const err = handleAxiosError(error);
                 console.log(err);
             }
         })();

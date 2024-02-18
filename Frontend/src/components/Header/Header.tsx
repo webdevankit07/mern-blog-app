@@ -9,7 +9,11 @@ import { toggleTheme } from '../../store/features/theme/themeSlice';
 import { deleteUserFailure, signoutUserSuccess } from '../../store/features/user/userSlice';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { handleAxiosError } from '../../utils/utils';
+
+interface ValidationError {
+    message: string;
+    errors: Record<string, string[]>;
+}
 
 const Header = () => {
     const { theme } = useAppSelector((state) => state.theme);
@@ -31,11 +35,17 @@ const Header = () => {
     // SignOut User....*:
     const handleSignout = async () => {
         try {
-            await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/logout/${currentUser?._id}`);
+            await axios.post(`/api/v1/user/logout/${currentUser?._id}`);
             dispatch(signoutUserSuccess());
         } catch (error) {
-            const err = await handleAxiosError(error);
-            dispatch(deleteUserFailure(err));
+            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+                console.log(error.response?.data.message);
+                dispatch(deleteUserFailure(error.response?.data.message));
+            } else {
+                const err = error as Error;
+                console.log(err);
+                dispatch(deleteUserFailure(err.message));
+            }
         }
     };
 

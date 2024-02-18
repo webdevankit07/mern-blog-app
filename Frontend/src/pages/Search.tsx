@@ -42,7 +42,7 @@ const Search = () => {
             try {
                 setLoading(true);
                 const searchQuery = urlParams.toString();
-                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}post/getposts?${searchQuery}`);
+                const { data } = await axios(`/api/v1/post/getposts?${searchQuery}`);
 
                 setPosts(data.data.posts);
                 setLoading(false);
@@ -90,7 +90,7 @@ const Search = () => {
         urlParams.set('startIndex', startIndex.toString());
         const searchQuery = urlParams.toString();
         try {
-            const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}post/getposts?${searchQuery}`);
+            const { data } = await axios(`/api/v1/post/getposts?${searchQuery}`);
             setPosts([...posts, ...data.data.posts]);
             if (data.data.posts.length === 9) {
                 setShowMore(true);

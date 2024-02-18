@@ -30,7 +30,7 @@ const OAuth = () => {
                 googlePhotoUrl: resultsFromGoogle.user.photoURL,
             };
 
-            const { data } = await axios.post(`${import.meta.env.VITE_API_BASE_URL}auth/google`, googleData);
+            const { data } = await axios.post('/api/v1/auth/google', googleData);
             dispatch(signInSuccess(data.data.user));
             navigate('/');
         } catch (error) {

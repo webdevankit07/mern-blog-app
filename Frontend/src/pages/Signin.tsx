@@ -46,7 +46,7 @@ const Signin = () => {
     const handleFormSubmit = async (formData: SignInFormData) => {
         try {
             dispatch(signInStart());
-            const { data } = await axios.post(`${import.meta.env.VITE_API_BASE_URL}auth/login`, formData);
+            const { data } = await axios.post('/api/v1/auth/login', formData);
             dispatch(signInSuccess(data.data.user));
             navigate('/');
         } catch (error) {

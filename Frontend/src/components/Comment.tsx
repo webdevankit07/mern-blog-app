@@ -34,7 +34,7 @@ const Comment = ({ comment, onLike, onEdit, onDelete }: PropsType) => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios(`${import.meta.env.VITE_API_BASE_URL}user/getuser/${comment.userId}`);
+                const { data } = await axios(`/api/v1/user/getuser/${comment.userId}`);
                 setUser(data.data);
             } catch (error) {
                 const err = await handleAxiosError(error);
@@ -52,9 +52,7 @@ const Comment = ({ comment, onLike, onEdit, onDelete }: PropsType) => {
     // handleSave function....*:
     const handleSave = async () => {
         try {
-            await axios.put(`${import.meta.env.VITE_API_BASE_URL}comment/edit-comment/${comment._id}`, {
-                content: editedContent,
-            });
+            await axios.put(`/api/v1/comment/edit-comment/${comment._id}`, { content: editedContent });
             setIsEditing(false);
             onEdit(comment._id, editedContent);
         } catch (error) {
