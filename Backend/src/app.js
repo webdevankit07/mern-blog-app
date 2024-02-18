@@ -17,8 +17,8 @@ const corsConfig = {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 };
-app.use(cors());
-app.options('', cors());
+app.use(cors(corsConfig));
+app.options('', cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
