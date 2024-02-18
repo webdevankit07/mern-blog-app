@@ -77,7 +77,7 @@ const CommentSection = ({ postId }: PropsType) => {
                 )
             );
         } catch (error) {
-            const err = handleAxiosError(error);
+            const err = await handleAxiosError(error);
             console.log(err);
         }
     };

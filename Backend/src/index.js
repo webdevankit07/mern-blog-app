@@ -9,7 +9,7 @@ import connectDB from './db/connectDB.js';
 
         // server running...
         app.listen(process.env.PORT || 8000, () => {
-            console.log(` Server running on PORT ${process.env.PORT}`);
+            console.log(` Server running on PORT ${process.env.PORT || 8000}`);
         });
     } catch (error) {
         console.log(`Something error happened while connecting to server: \n ${error}`);
