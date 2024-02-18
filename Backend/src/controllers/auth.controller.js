@@ -66,8 +66,6 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
         const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
         const userRes = await User.findById(user._id).select('-password -refreshToken');
 
-        console.log({ baccessToken: accessToken, brefreshToken: refreshToken });
-
         res.status(200)
             .cookie('accessToken', accessToken, accessTokenOptions)
             .cookie('refreshToken', refreshToken, refreshTokenOptions)
@@ -86,7 +84,6 @@ export const googleSignIn = asyncHandler(async (req, res, next) => {
         await newUser.save();
 
         const { accessToken, refreshToken } = await generateAccessAndRefreshToken(newUser._id);
-        console.log({ newUser, accessToken, refreshToken });
         const userRes = await User.findById(newUser._id).select('-password -refreshToken');
 
         res.status(200)

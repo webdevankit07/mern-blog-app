@@ -6,15 +6,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                // target: 'https://webdevankit-blog-app.vercel.app',
-=======
->>>>>>> parent of 6865630 (fix deployement bug)
                 target: 'http://localhost:8000',
-=======
-                target: 'https://webdevankit-blog-app.vercel.app',
->>>>>>> f2710479c31ac31382969410b8cf2e9dab0145bc
                 secure: false,
             },
         },
