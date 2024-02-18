@@ -6,6 +6,7 @@ import { Post } from './PostPage';
 import { handleAxiosError } from '../utils/utils';
 import { Spinner } from 'flowbite-react';
 import { useAppSelector } from '../store/storeHooks';
+import { fetchData } from '../api/api';
 
 const Home = () => {
     const { currentUser } = useAppSelector((state) => state.user);
