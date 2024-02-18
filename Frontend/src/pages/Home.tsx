@@ -16,7 +16,7 @@ const Home = () => {
         (async () => {
             setLoading(true);
             try {
-                const { data } = await axios(`https://webdev-ankit-blog-api.up.railway.app/api/v1/post/getposts`);
+                const { data } = await axios('/api/v1/post/getPosts');
                 setPosts(data.data.posts);
                 setLoading(false);
             } catch (error) {
