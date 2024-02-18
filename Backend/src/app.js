@@ -15,8 +15,10 @@ const app = express();
 const corsConfig = {
     origin: 'https://webdev-ankit-blog-app.vercel.app/',
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 };
 app.use(cors());
+app.options('', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
