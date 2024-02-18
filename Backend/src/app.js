@@ -23,16 +23,12 @@ app.use(cookieParser());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// app.use(express.static(path.join(__dirname, '../../Frontend/dist')));
+app.use(express.static(path.join(__dirname, '../../Frontend/dist')));
 
 // Routes declaration...
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/comment', commentRoutes);
-
-app.get('/', (req, res) => {
-    res.send('Welcome');
-});
 
 export default app;
