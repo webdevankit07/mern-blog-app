@@ -32,7 +32,7 @@ app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/comment', commentRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Welcome to mern blog api');
+    res.send('Welcome');
 });
 
 export default app;
