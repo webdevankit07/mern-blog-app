@@ -54,7 +54,7 @@ const Header = () => {
                 className='relative self-center text-sm font-semibold whitespace-nowrap sm:text-xl dark:text-white'
             >
                 <div className='absolute -top-3 w-[150px]'>
-                    <img src='../../../public/web-universe-high-resolution-logo-transparent.png' alt='logo' />
+                    <img src='/web-universe-high-resolution-logo-transparent.png' alt='logo' />
                 </div>
             </Link>
             <form onSubmit={handleSubmit}>

@@ -13,10 +13,7 @@ const FooterCom = () => {
                             className='self-center text-lg font-semibold whitespace-nowrap sm:text-xl dark:text-white'
                         >
                             <div className='w-[150px] md:w-[200px]'>
-                                <img
-                                    src='../../../public/web-universe-high-resolution-logo-transparent.png'
-                                    alt='logo'
-                                />
+                                <img src='/web-universe-high-resolution-logo-transparent.png' alt='logo' />
                             </div>
                         </Link>
                     </div>

@@ -51,7 +51,7 @@ const Signin = () => {
                 <div className='flex-1 hidden md:block'>
                     <div className='relative flex flex-col  max-h-[600px] md:max-w-[380px] lg:max-w-[400px]  items-center overflow-hidden rounded-md cursor-pointer group border'>
                         <img
-                            src={'../../public/image.jpg'}
+                            src={'/image.jpg'}
                             alt=''
                             className='group-hover:scale-[1.05] transition-all duration-300 ease-in-out h-[700px] w-full'
                         />
@@ -77,7 +77,7 @@ const Signin = () => {
                             className='flex justify-center mb-10 text-4xl font-bold sm:text-xl dark:text-white'
                         >
                             <img
-                                src='../../public/web-universe-high-resolution-logo-transparent.png'
+                                src='/web-universe-high-resolution-logo-transparent.png'
                                 className='w-[200px]'
                                 alt=''
                             />
