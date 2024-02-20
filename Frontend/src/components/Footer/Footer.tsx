@@ -12,10 +12,12 @@ const FooterCom = () => {
                             to={'/'}
                             className='self-center text-lg font-semibold whitespace-nowrap sm:text-xl dark:text-white'
                         >
-                            <span className='px-2 py-1 mr-0.5 text-white rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'>
-                                Ankit's
-                            </span>
-                            Blog
+                            <div className='w-[150px] md:w-[200px]'>
+                                <img
+                                    src='../../../public/web-universe-high-resolution-logo-transparent.png'
+                                    alt='logo'
+                                />
+                            </div>
                         </Link>
                     </div>
                     <div className='grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-10'>

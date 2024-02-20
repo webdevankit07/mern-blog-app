@@ -31,11 +31,15 @@ const Home = () => {
         <div>
             <div className='flex flex-col max-w-6xl gap-6 px-3 mx-auto p-28 '>
                 <h1 className='text-3xl font-bold lg:text-6xl'>
-                    Welcome {currentUser?.userName === 'webdevankit07' ? 'to my Blog' : currentUser?.fullName}
+                    Welcome {currentUser ? currentUser?.fullName : 'to Web Universe'}
                 </h1>
+                <h2 className='text-lg font-semibold'>
+                    Web Universe: Exploring webTech, Space,Science Frontiers and Bizare Facts
+                </h2>
                 <p className='text-xs text-gray-500 sm:text-sm'>
-                    Here you'll find a variety of articles and tutorials on topics such as web development, software
-                    engineering, and programming languages.
+                    "Welcome to the Web Universe, where programming prowess meets cosmic curiosity. Dive into
+                    cutting-edge insights across Bizare Facts, programming, space exploration, computer science, and web
+                    development, unlocking the frontiers of innovation"
                 </p>
                 <Link to='/search' className='text-xs font-bold text-teal-500 sm:text-sm hover:underline'>
                     View all posts
@@ -58,7 +62,7 @@ const Home = () => {
                                 </span>
                             </h2>
                             <div className='flex flex-wrap justify-center gap-4'>
-                                {posts.map((post) => (
+                                {posts.reverse().map((post) => (
                                     <PostCard key={post._id} post={post} />
                                 ))}
                             </div>

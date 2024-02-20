@@ -44,14 +44,22 @@ const PostPage = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await Axios(`${apiBaseUrl}/post/getposts?limit=3`);
-                setRecentPosts(data.data.posts);
+                const { data } = await Axios(`${apiBaseUrl}/post/getposts`);
+                const posts = data.data.posts;
+                let num = 1;
+                const filterPosts = await posts.filter((item: Post) => {
+                    if (item._id !== post?._id && num <= 3) {
+                        num++;
+                        return item;
+                    }
+                });
+                setRecentPosts(filterPosts);
             } catch (error) {
                 const err = handleAxiosError(error);
                 console.log(err);
             }
         })();
-    }, []);
+    }, [post]);
 
     if (loading) {
         return (

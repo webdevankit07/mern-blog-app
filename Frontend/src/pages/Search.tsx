@@ -128,9 +128,12 @@ const Search = () => {
                         <Select onChange={handleChange} value={sidebarData.category} id='category'>
                             <option value='all'>All</option>
                             <option value='uncategorized'>Uncategorized</option>
-                            <option value='reactjs'>React.js</option>
-                            <option value='nextjs'>Next.js</option>
-                            <option value='javascript'>JavaScript</option>
+                            <option value='webtech'>WebTech</option>
+                            <option value='history'>History</option>
+                            <option value='science'>Science</option>
+                            <option value='science-fiction'>Science & Fiction</option>
+                            <option value='mystery'>Mystery</option>
+                            <option value='facts'>Facts</option>
                         </Select>
                     </div>
                     <Button type='submit' outline gradientDuoTone='purpleToPink'>

@@ -49,11 +49,13 @@ const Header = () => {
 
     return (
         <Navbar className='border-b-2'>
-            <Link to={'/'} className='self-center text-sm font-semibold whitespace-nowrap sm:text-xl dark:text-white'>
-                <span className='px-2 py-1 mr-0.5 text-white rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'>
-                    Ankit's
-                </span>
-                Blog
+            <Link
+                to={'/'}
+                className='relative self-center text-sm font-semibold whitespace-nowrap sm:text-xl dark:text-white'
+            >
+                <div className='absolute -top-3 w-[150px]'>
+                    <img src='../../../public/web-universe-high-resolution-logo-transparent.png' alt='logo' />
+                </div>
             </Link>
             <form onSubmit={handleSubmit}>
                 <TextInput

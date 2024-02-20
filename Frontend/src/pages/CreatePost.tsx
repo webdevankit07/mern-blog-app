@@ -6,9 +6,9 @@ import { firebaseStorage } from '../firebase';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import 'react-circular-progressbar/dist/styles.css';
 import ShowAlert from '../components/showAlert';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Axios } from '../config/api';
+import { handleAxiosError } from '../utils/utils';
 
 type FormData = {
     title?: string;
@@ -16,11 +16,6 @@ type FormData = {
     image?: string;
     category?: string;
 };
-
-interface ValidationError {
-    message: string;
-    errors: Record<string, string[]>;
-}
 
 const CreatePost = () => {
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -73,12 +68,9 @@ const CreatePost = () => {
             const { data } = await Axios.post(`/post/create`, formData);
             navigate(`/post/${data.data.post.slug}`);
         } catch (error) {
-            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                setPublishError(error.response?.data.message);
-            } else {
-                const err = error as Error;
-                setPublishError(err.message);
-            }
+            const err = await handleAxiosError(error);
+            console.log(err);
+            setPublishError(err);
         }
     };
 
@@ -97,9 +89,12 @@ const CreatePost = () => {
                     />
                     <Select onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
                         <option value='uncategorized'>Select a category</option>
-                        <option value='javascript'>JavaScript</option>
-                        <option value='reactjs'>React.js</option>
-                        <option value='nextjs'>Next.js</option>
+                        <option value='webtech'>WebTech</option>
+                        <option value='history'>History</option>
+                        <option value='science'>Science</option>
+                        <option value='science-fiction'>Science & Fiction</option>
+                        <option value='mystery'>Mystery</option>
+                        <option value='facts'>Facts</option>
                     </Select>
                 </div>
                 <div className='flex flex-col items-center justify-between gap-4 p-3 border-2 border-teal-500 border-dashed md:flex-row'>

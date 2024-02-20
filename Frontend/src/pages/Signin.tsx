@@ -1,15 +1,16 @@
-import axios from 'axios';
-import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
+import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { signInFailure, signInStart, signInSuccess } from '../store/features/user/userSlice';
+import { setUserError, signInFailure, signInStart, signInSuccess } from '../store/features/user/userSlice';
 
 // React Icons...
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import OAuth from '../components/OAuth';
 import { Axios } from '../config/api';
+import { handleAxiosError } from '../utils/utils';
+import ShowAlert from '../components/showAlert';
 
 type SignInFormData = {
     fullName: string;
@@ -18,11 +19,6 @@ type SignInFormData = {
     password: string;
     confirmPassword: string;
 };
-
-interface ValidationError {
-    message: string;
-    errors: Record<string, string[]>;
-}
 
 const Signin = () => {
     const { loading, error } = useAppSelector((state) => state.user);
@@ -43,33 +39,50 @@ const Signin = () => {
             dispatch(signInSuccess(data.data.user));
             navigate('/');
         } catch (error) {
-            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-                dispatch(signInFailure(error.response?.data.message));
-            } else {
-                const err = error as Error;
-                dispatch(signInFailure(err.message));
-            }
+            const err = await handleAxiosError(error);
+            dispatch(signInFailure(err));
         }
     };
 
     return (
-        <div className='my-20'>
-            <div className='flex flex-col max-w-5xl p-3 mx-auto md:flex-row md:items-center'>
+        <div className='my-10'>
+            <div className='flex flex-row items-center justify-center max-w-5xl gap-5 p-3 mx-auto rounded-md'>
                 {/* Left */}
-                <div className='flex-1'>
-                    <Link to={'/'} className='text-4xl font-bold sm:text-xl dark:text-white'>
-                        <span className='px-2 py-1 mr-0.5 text-white rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'>
-                            Ankit's
-                        </span>
-                        Blog
-                    </Link>
-                    <p className='mt-5 text-sm'>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni sint velit a!
-                    </p>
+                <div className='flex-1 hidden md:block'>
+                    <div className='relative flex flex-col  max-h-[600px] md:max-w-[380px] lg:max-w-[400px]  items-center overflow-hidden rounded-md cursor-pointer group border'>
+                        <img
+                            src={'../../public/image.jpg'}
+                            alt=''
+                            className='group-hover:scale-[1.05] transition-all duration-300 ease-in-out h-[700px] w-full'
+                        />
+                        <div className='absolute hidden w-full h-full transition-all duration-300 ease-in-out bg-black opacity-50 group-hover:block'></div>
+                        <Link
+                            to={'/'}
+                            className='absolute flex justify-center mb-10 text-4xl font-bold transition-all duration-300 ease-in-out group-hover:bottom-0 -bottom-28 sm:text-xl dark:text-white'
+                        >
+                            <img
+                                src='../../public/web-universe-high-resolution-logo-transparent.png'
+                                className='w-[200px]'
+                                alt=''
+                            />
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Right */}
                 <div className='flex-1'>
+                    <div className='block md:hidden'>
+                        <Link
+                            to={'/'}
+                            className='flex justify-center mb-10 text-4xl font-bold sm:text-xl dark:text-white'
+                        >
+                            <img
+                                src='../../public/web-universe-high-resolution-logo-transparent.png'
+                                className='w-[200px]'
+                                alt=''
+                            />
+                        </Link>
+                    </div>
                     <form className='flex flex-col gap-4' onSubmit={handleSubmit(handleFormSubmit)}>
                         <div>
                             <Label value='Your email' htmlFor='email' />
@@ -135,9 +148,12 @@ const Signin = () => {
                         </Link>
                     </div>
                     {error && (
-                        <Alert className='mt-5 text-center' color={'failure'}>
-                            {error}
-                        </Alert>
+                        <ShowAlert
+                            message={error}
+                            type={'failure'}
+                            className={'mt-5 text-center'}
+                            onClose={() => dispatch(setUserError(null))}
+                        />
                     )}
                 </div>
             </div>

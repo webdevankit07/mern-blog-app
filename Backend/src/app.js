@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -7,7 +9,6 @@ import { postRoutes } from './routes/post.routes.js';
 import { commentRoutes } from './routes/comment.routes.js';
 
 const app = express();
-
 const corsOptions = {
     origin: process.env.FRONDEND_LINK,
     credentials: true,

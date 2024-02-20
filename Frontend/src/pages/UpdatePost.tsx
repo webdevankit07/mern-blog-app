@@ -24,16 +24,19 @@ const UpdatePost = () => {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imageFileUploadingProgress, setImageFileUploadingProgress] = useState<number | null>(null);
     const [imageFileUploadError, setImageFileUploadError] = useState<string | null>(null);
-    const [formData, setFormData] = useState<FormData | null>();
+    const [formData, setFormData] = useState<FormData | null>(null);
     const [publishError, setPublishError] = useState<string | undefined>(undefined);
     const navigate = useNavigate();
+
+    console.log(formData);
 
     // fetchData...
     useEffect(() => {
         (async () => {
             try {
                 const { data } = await Axios(`/post/getposts?postId=${postId}`);
-                setFormData(data.posts[0]);
+                setFormData(data.data.posts[0]);
+                console.log(data.data.posts[0]);
                 setPublishError(undefined);
             } catch (error) {
                 const err = await handleAxiosError(error);
@@ -110,9 +113,12 @@ const UpdatePost = () => {
                         value={formData?.category}
                     >
                         <option value='uncategorized'>Select a category</option>
-                        <option value='javascript'>JavaScript</option>
-                        <option value='reactjs'>React.js</option>
-                        <option value='nextjs'>Next.js</option>
+                        <option value='webtech'>WebTech</option>
+                        <option value='history'>History</option>
+                        <option value='science'>Science</option>
+                        <option value='science-fiction'>Science & Fiction</option>
+                        <option value='mystery'>Mystery</option>
+                        <option value='facts'>Facts</option>
                     </Select>
                 </div>
                 <div className='flex flex-col items-center justify-between gap-4 p-3 border-2 border-teal-500 border-dashed md:flex-row'>
