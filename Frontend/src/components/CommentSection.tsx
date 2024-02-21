@@ -39,7 +39,7 @@ const CommentSection = ({ postId }: PropsType) => {
         try {
             if (comment.length > 200) return;
             const Data = { content: comment, postId, userId: currentUser?._id };
-            const { data } = await Axios.post(`/api/v1/comment/create`, Data);
+            const { data } = await Axios.post(`/comment/create`, Data);
             setComment('');
             setCommentError(null);
             setComments([data.data, ...comments]);
@@ -53,7 +53,7 @@ const CommentSection = ({ postId }: PropsType) => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await Axios(`/api/v1/comment/getPostComments/${postId}`);
+                const { data } = await Axios(`/comment/getPostComments/${postId}`);
                 setComments(data.data);
             } catch (error) {
                 const err = await handleAxiosError(error);
@@ -68,7 +68,7 @@ const CommentSection = ({ postId }: PropsType) => {
             if (!currentUser) {
                 return navigate('/sign-in');
             }
-            const { data } = await Axios.put(`/api/v1/comment/like-comment/${commentId}`);
+            const { data } = await Axios.put(`/comment/like-comment/${commentId}`);
             setComments(
                 comments.map((comment) =>
                     comment._id === commentId
@@ -93,7 +93,7 @@ const CommentSection = ({ postId }: PropsType) => {
     const handleDelete = async (commentId: string | undefined) => {
         setShowModal(false);
         try {
-            await Axios.delete(`/api/v1/comment/delete-comment/${commentId}`);
+            await Axios.delete(`/comment/delete-comment/${commentId}`);
             setComments(comments.filter((comment) => comment._id !== commentId));
         } catch (error) {
             const err = await handleAxiosError(error);
