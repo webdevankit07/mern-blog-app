@@ -7,7 +7,10 @@ const env = loadEnv(process.cwd(), '');
 export default defineConfig({
     server: {
         proxy: {
-            '/api': `${env.VITE_API_BASE_PROXY_URL}`,
+            '/api': {
+                target: `${env.VITE_API_BASE_PROXY_URL}`,
+                changeOrigin: true,
+            },
         },
     },
     plugins: [react()],
