@@ -15,8 +15,30 @@ import PostPage from './pages/PostPage';
 import Search from './pages/Search';
 import Home from './pages/Home';
 import Error from './pages/Error';
+import { useEffect } from 'react';
+import { Axios } from './config/api';
+import { handleAxiosError } from './utils/utils';
+import { useAppDispatch } from './store/storeHooks';
+import { setUserState } from './store/features/user/userSlice';
 
 const App = () => {
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const {
+                    data: { data },
+                } = await Axios.get('/auth/validate-token');
+                dispatch(setUserState(data.user));
+            } catch (error) {
+                const err = await handleAxiosError(error);
+                console.log(err);
+                dispatch(setUserState(null));
+            }
+        })();
+    }, [dispatch]);
+
     return (
         <Router>
             <Routes>

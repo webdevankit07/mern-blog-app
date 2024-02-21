@@ -14,20 +14,25 @@ export type currentUser = {
 
 type InitialState = {
     currentUser: currentUser | null;
-    error: string | null | undefined;
     loading: boolean;
+    error: string | null | undefined;
 };
 
 const initialState: InitialState = {
     currentUser: null,
-    error: null,
     loading: false,
+    error: null,
 };
 
 const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+        setUserState: (state: InitialState, { payload }: PayloadAction<currentUser | null>) => {
+            state.currentUser = payload;
+            state.loading = false;
+            state.error = null;
+        },
         setUserError: (state: InitialState, { payload }: PayloadAction<string | null>) => {
             state.error = payload;
         },
@@ -80,6 +85,7 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 export const {
+    setUserState,
     setUserError,
     signInStart,
     signInSuccess,
