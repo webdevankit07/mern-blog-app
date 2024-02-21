@@ -4,7 +4,6 @@ import { handleAxiosError } from '../utils/utils';
 import { Button, Spinner } from 'flowbite-react';
 import CommentSection from '../components/CommentSection';
 import PostCard from '../components/PostCard';
-import { apiBaseUrl } from '../config';
 import { Axios } from '../config/api';
 
 export type Post = {
@@ -22,6 +21,7 @@ export type Post = {
 
 const PostPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
+    const [articleLoading, setArticleLoading] = useState<boolean>(true);
     const [post, setPost] = useState<Post | null>(null);
     const [recentPosts, setRecentPosts] = useState<Post[] | null>(null);
     const { postSlug } = useParams();
@@ -30,11 +30,11 @@ const PostPage = () => {
         (async () => {
             setLoading(true);
             try {
-                const { data } = await Axios(`/post/getposts?slug=${postSlug}`);
+                const { data } = await Axios(`/api/v1/post/getposts?slug=${postSlug}`);
                 setPost(data.data.posts[0]);
                 setLoading(false);
             } catch (error) {
-                const err = handleAxiosError(error);
+                const err = await handleAxiosError(error);
                 setLoading(false);
                 console.log(err);
             }
@@ -43,20 +43,17 @@ const PostPage = () => {
 
     useEffect(() => {
         (async () => {
+            setArticleLoading(true);
             try {
-                const { data } = await Axios(`${apiBaseUrl}/post/getposts`);
+                const { data } = await Axios(`/api/v1/post/getposts`);
                 const posts = data.data.posts;
-                let num = 1;
-                const filterPosts = await posts.filter((item: Post) => {
-                    if (item._id !== post?._id && num <= 3) {
-                        num++;
-                        return item;
-                    }
-                });
+                const filterPosts = posts.reverse().slice(0, 3);
                 setRecentPosts(filterPosts);
+                setArticleLoading(false);
             } catch (error) {
                 const err = handleAxiosError(error);
                 console.log(err);
+                setArticleLoading(false);
             }
         })();
     }, [post]);
@@ -95,10 +92,15 @@ const PostPage = () => {
                     <h1 className='flex flex-col items-center pb-1 mt-5 text-xl'>
                         Recent Articles <hr className='w-[170px] mx-auto mt-2' />
                     </h1>
-
-                    <div className='flex flex-wrap justify-center gap-5 mt-5'>
-                        {recentPosts && recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
-                    </div>
+                    {articleLoading ? (
+                        <div className='grid min-h-28 place-content-center'>
+                            <Spinner size={'xl'} />
+                        </div>
+                    ) : (
+                        <div className='flex flex-wrap justify-center gap-5 mt-5'>
+                            {recentPosts && recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+                        </div>
+                    )}
                 </div>
             </main>
         )

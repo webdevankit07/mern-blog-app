@@ -16,7 +16,7 @@ const Home = () => {
         (async () => {
             setLoading(true);
             try {
-                const { data } = await Axios(`/post/getPosts`);
+                const { data } = await Axios(`api/v1/post/getPosts`);
                 setPosts(data.data.posts);
                 setLoading(false);
             } catch (error) {
