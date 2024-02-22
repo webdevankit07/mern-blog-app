@@ -108,7 +108,7 @@ export const updatePost = asyncHandler(async (req, res, next) => {
     if (req.user.id !== req.params.userId) {
         return next(new customError(403, 'You are not allowed to update this post'));
     }
-
+    console.log(req.body);
     const slug = req.body.title
         .split(' ')
         .join('-')

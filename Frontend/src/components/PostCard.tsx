@@ -19,9 +19,11 @@ const PostCard = ({ post }: PropsType) => {
             <div className='flex flex-col gap-2 p-3'>
                 <p className='text-base font-semibold line-clamp-2'>{post.title}</p>
                 <span className='text-sm italic'>
-                    <Button color='gray' size={'xs'} pill>
-                        {post.category}
-                    </Button>
+                    <Link to={`/search?category=${post.category}`}>
+                        <Button color='gray' size={'xs'} pill>
+                            {post.category}
+                        </Button>
+                    </Link>
                 </span>
 
                 <Link

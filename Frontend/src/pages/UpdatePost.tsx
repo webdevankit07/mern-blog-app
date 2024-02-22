@@ -1,4 +1,4 @@
-import { Button, FileInput, Select, TextInput } from 'flowbite-react';
+import { Button, FileInput, Select, Spinner, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -21,26 +21,33 @@ type FormData = {
 const UpdatePost = () => {
     const { currentUser } = useAppSelector((state) => state.user);
     const { postId } = useParams();
+    const [loading, setLoading] = useState<boolean>(true);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imageFileUploadingProgress, setImageFileUploadingProgress] = useState<number | null>(null);
     const [imageFileUploadError, setImageFileUploadError] = useState<string | null>(null);
-    const [formData, setFormData] = useState<FormData | null>(null);
     const [publishError, setPublishError] = useState<string | undefined>(undefined);
     const navigate = useNavigate();
-
-    console.log(formData);
+    const [formData, setFormData] = useState<FormData>({
+        title: '',
+        content: '',
+        image: '',
+        category: '',
+    });
+    const [formDataContent, setFormDataContent] = useState<string>('');
 
     // fetchData...
     useEffect(() => {
         (async () => {
+            setLoading(true);
             try {
                 const { data } = await Axios(`/post/getposts?postId=${postId}`);
                 setFormData(data.data.posts[0]);
-                console.log(data.data.posts[0]);
                 setPublishError(undefined);
+                setLoading(false);
             } catch (error) {
                 const err = await handleAxiosError(error);
                 setPublishError(err);
+                setLoading(false);
             }
         })();
     }, [postId]);
@@ -86,13 +93,22 @@ const UpdatePost = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data } = await Axios.put(`/post/updatepost/${postId}/${currentUser?._id}`, formData);
+            const postData = { ...formData, content: formDataContent };
+            const { data } = await Axios.put(`/post/updatepost/${postId}/${currentUser?._id}`, postData);
             navigate(`/post/${data.data.slug}`);
         } catch (error) {
             const err = await handleAxiosError(error);
             setPublishError(err);
         }
     };
+
+    if (loading) {
+        return (
+            <div className='grid min-h-screen place-content-center'>
+                <Spinner size={'xl'} />
+            </div>
+        );
+    }
 
     return (
         <div className='max-w-4xl p-3 mx-auto mb-20'>
@@ -153,10 +169,8 @@ const UpdatePost = () => {
                     theme='snow'
                     placeholder='Write something...'
                     className='mb-12 h-72'
-                    onChange={(value) => {
-                        setFormData({ ...formData, content: value });
-                    }}
-                    value={formData?.content}
+                    onChange={(value) => setFormDataContent(value)}
+                    value={formDataContent || formData.content}
                 />
                 <Button type='submit' gradientDuoTone={'purpleToPink'}>
                     Update

@@ -20,7 +20,9 @@ const Search = () => {
     });
     const [posts, setPosts] = useState<Post[] | []>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
     const [showMore, setShowMore] = useState<boolean>(false);
+    const [pageNo, setPageNo] = useState<number>(1);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -43,8 +45,8 @@ const Search = () => {
             try {
                 const searchQuery = urlParams.toString();
                 const { data } = await Axios(`/post/getposts?${searchQuery}`);
-
                 setPosts(data.data.posts);
+                setPageNo((prev) => prev + 1);
                 if (data.data.posts.length === 9) {
                     setShowMore(true);
                 } else {
@@ -84,20 +86,19 @@ const Search = () => {
     };
 
     const handleShowMore = async () => {
-        const numberOfPosts = posts.length;
-        const startIndex = numberOfPosts;
-        const urlParams = new URLSearchParams(location.search);
-        urlParams.set('startIndex', startIndex.toString());
-        const searchQuery = urlParams.toString();
+        setShowMoreLoading(true);
+        setPageNo((prev) => prev + 1);
         try {
-            const { data } = await Axios(`/post/getposts?${searchQuery}`);
+            const { data } = await Axios(`/post/getposts?page=${pageNo}`);
             setPosts([...posts, ...data.data.posts]);
             if (data.data.posts.length === 9) {
                 setShowMore(true);
             } else {
                 setShowMore(false);
             }
+            setShowMoreLoading(false);
         } catch (error) {
+            setShowMoreLoading(false);
             return;
         }
     };
@@ -151,10 +152,15 @@ const Search = () => {
                         </div>
                     )}
                     {!loading && posts && posts.map((post) => <PostCard key={post._id} post={post} />)}
-                    {showMore && (
-                        <button onClick={handleShowMore} className='w-full text-lg text-teal-500 hover:underline p-7'>
-                            Show More
+                    {showMore && !showMoreLoading && (
+                        <button className='self-center w-full text-sm text-teal-500 py-7' onClick={handleShowMore}>
+                            Show more
                         </button>
+                    )}
+                    {showMoreLoading && (
+                        <div className='grid w-full min-h-20 place-content-center'>
+                            <Spinner size={'xl'} />
+                        </div>
                     )}
                 </div>
             </div>

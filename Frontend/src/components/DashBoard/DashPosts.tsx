@@ -22,6 +22,7 @@ type Post = {
 const DashPosts = () => {
     const { currentUser } = useAppSelector((state) => state.user);
     const [loading, setLoading] = useState<boolean>(true);
+    const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [showMore, setShowMore] = useState<boolean>(true);
     const [pageNo, setPageNo] = useState<number>(1);
@@ -51,18 +52,22 @@ const DashPosts = () => {
     }, [currentUser?._id]);
 
     const handleShowMore = async () => {
+        setShowMoreLoading(true);
+        setPageNo((prev) => prev + 1);
         try {
-            setPageNo((prev) => prev + 1);
+            console.log(pageNo);
             const { data } = await Axios(`/post/getposts?userId=${currentUser?._id}&page=${pageNo}`);
-            setUserPosts([...userPosts, ...data.posts]);
-            if (data.posts.length < 9) {
+            setUserPosts([...userPosts, ...data.data.posts]);
+            if (data.data.posts.length < 9) {
                 setShowMore(false);
             } else {
                 setShowMore(true);
             }
+            setShowMoreLoading(false);
         } catch (error) {
             const err = await handleAxiosError(error);
             console.log(err);
+            setShowMoreLoading(false);
         }
     };
 
@@ -141,10 +146,15 @@ const DashPosts = () => {
                             ))}
                         </Table.Body>
                     </Table>
-                    {showMore && (
+                    {showMore && !showMoreLoading && (
                         <button className='self-center w-full text-sm text-teal-500 py-7' onClick={handleShowMore}>
                             Show more
                         </button>
+                    )}
+                    {showMoreLoading && (
+                        <div className='grid w-full min-h-20 place-content-center'>
+                            <Spinner size={'xl'} />
+                        </div>
                     )}
                 </>
             ) : (

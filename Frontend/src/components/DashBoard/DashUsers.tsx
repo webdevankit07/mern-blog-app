@@ -22,6 +22,7 @@ export type UserType = {
 const DashUsers = () => {
     const { currentUser } = useAppSelector((state) => state.user);
     const [loading, setLoading] = useState<boolean>(true);
+    const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
     const [users, setUsers] = useState<UserType[]>([]);
     const [showMore, setShowMore] = useState<boolean>(true);
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -49,6 +50,7 @@ const DashUsers = () => {
     }, [currentUser?._id]);
 
     const handleShowMore = async () => {
+        setShowMoreLoading(true);
         const startIndex = users.length;
         try {
             const { data } = await Axios(`/user/getusers?startIndex=${startIndex}`);
@@ -58,9 +60,11 @@ const DashUsers = () => {
             } else {
                 setShowMore(true);
             }
+            setShowMoreLoading(false);
         } catch (error) {
             const err = await handleAxiosError(error);
             console.log(err);
+            setShowMoreLoading(false);
         }
     };
 
@@ -132,10 +136,15 @@ const DashUsers = () => {
                             ))}
                         </Table.Body>
                     </Table>
-                    {showMore && (
+                    {showMore && !showMoreLoading && (
                         <button className='self-center w-full text-sm text-teal-500 py-7' onClick={handleShowMore}>
                             Show more
                         </button>
+                    )}
+                    {showMoreLoading && (
+                        <div className='grid w-full min-h-20 place-content-center'>
+                            <Spinner size={'xl'} />
+                        </div>
                     )}
                 </>
             ) : (
