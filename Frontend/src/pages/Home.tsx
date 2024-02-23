@@ -1,31 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import PostCard from '../components/PostCard';
-import { Post } from './PostPage';
-import { handleAxiosError } from '../utils/utils';
-import { Spinner } from 'flowbite-react';
 import { useAppSelector } from '../store/storeHooks';
-import { Axios } from '../config/api';
+import Posts from '../components/Posts';
 
 const Home = () => {
     const { currentUser } = useAppSelector((state) => state.user);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [posts, setPosts] = useState<Post[] | []>([]);
-
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
-            try {
-                const { data } = await Axios(`/post/getPosts`);
-                setPosts(data.data.posts);
-                setLoading(false);
-            } catch (error) {
-                const err = await handleAxiosError(error);
-                console.log(err);
-                setLoading(false);
-            }
-        })();
-    }, []);
 
     return (
         <div>
@@ -45,34 +23,13 @@ const Home = () => {
                     View all posts
                 </Link>
             </div>
-
-            <div className='flex flex-col max-w-6xl gap-8 p-3 mx-auto py-7'>
-                {loading ? (
-                    <div className='grid place-content-center'>
-                        <Spinner size={'xl'} />
-                    </div>
-                ) : (
-                    posts &&
-                    posts.length > 0 && (
-                        <div className='flex flex-col gap-6 '>
-                            <h2 className='text-2xl font-semibold text-center'>
-                                Recent Posts
-                                <span className='flex justify-center'>
-                                    <hr className='w-40 mt-2' />
-                                </span>
-                            </h2>
-                            <div className='flex flex-wrap justify-center gap-4'>
-                                {posts.reverse().map((post) => (
-                                    <PostCard key={post._id} post={post} />
-                                ))}
-                            </div>
-                            <Link to={'/search'} className='text-lg text-center text-teal-500 hover:underline'>
-                                View all posts
-                            </Link>
-                        </div>
-                    )
-                )}
-            </div>
+            <Posts category='all' title='Recent Posts' />
+            <Posts category='webtech' title='Web Tech' />
+            <Posts category='history' title='History' />
+            <Posts category='science' title='Science' />
+            <Posts category='science-fiction' title='Science & Fiction' />
+            <Posts category='mystery' title='Mystery' />
+            <Posts category='facts' title='Facts' />
         </div>
     );
 };
