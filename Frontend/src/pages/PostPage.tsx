@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { handleAxiosError } from '../utils/utils';
 import { Button, Spinner } from 'flowbite-react';
 import CommentSection from '../components/CommentSection';
 import PostCard from '../components/PostCard';
-import { apiBaseUrl } from '../config';
 import { Axios } from '../config/api';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export type Post = {
     _id: string;
@@ -21,47 +20,38 @@ export type Post = {
 };
 
 const PostPage = () => {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [post, setPost] = useState<Post | null>(null);
-    const [recentPosts, setRecentPosts] = useState<Post[] | null>(null);
     const { postSlug } = useParams();
 
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
+    const { isLoading, data: post } = useQuery({
+        queryKey: [postSlug],
+        queryFn: async () => {
             try {
                 const { data } = await Axios(`/post/getposts?slug=${postSlug}`);
-                setPost(data.data.posts[0]);
-                setLoading(false);
+                return data.data.posts[0];
             } catch (error) {
                 const err = handleAxiosError(error);
-                setLoading(false);
                 console.log(err);
             }
-        })();
-    }, [postSlug]);
+        },
+    });
 
-    useEffect(() => {
-        (async () => {
+    const { data: recentPosts } = useQuery({
+        queryKey: ['recentPosts'],
+        queryFn: async () => {
             try {
-                const { data } = await Axios(`${apiBaseUrl}/post/getposts`);
-                const posts = data.data.posts;
-                let num = 1;
-                const filterPosts = await posts.filter((item: Post) => {
-                    if (item._id !== post?._id && num <= 3) {
-                        num++;
-                        return item;
-                    }
-                });
-                setRecentPosts(filterPosts);
+                const { data } = await Axios(`/post/getallposts`);
+                const posts = data.data.posts.reverse().slice(0, 3);
+                return posts;
             } catch (error) {
                 const err = handleAxiosError(error);
                 console.log(err);
             }
-        })();
-    }, [post]);
+        },
+        placeholderData: keepPreviousData,
+    });
+    6;
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className='grid min-h-screen place-content-center'>
                 <Spinner size={'xl'} />
@@ -97,7 +87,8 @@ const PostPage = () => {
                     </h1>
 
                     <div className='flex flex-wrap justify-center gap-5 mt-5'>
-                        {recentPosts && recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+                        {recentPosts &&
+                            recentPosts.map((recentpost: Post) => <PostCard key={recentpost._id} post={recentpost} />)}
                     </div>
                 </div>
             </main>

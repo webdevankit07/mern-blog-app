@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { HiAnnotation, HiArrowNarrowUp, HiDocumentText, HiOutlineUserGroup } from 'react-icons/hi';
 import { Button, Spinner, Table } from 'flowbite-react';
 import { Link } from 'react-router-dom';
@@ -8,61 +8,97 @@ import { CommentType } from '../CommentSection';
 import { UserType } from './DashUsers';
 import { handleAxiosError } from '../../utils/utils';
 import { Axios } from '../../config/api';
+import { useQuery } from '@tanstack/react-query';
 
 const DashBoardComp = () => {
     const { currentUser } = useAppSelector((state) => state.user);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [users, setUsers] = useState<UserType[]>();
-    const [comments, setComments] = useState<CommentType[] | []>([]);
-    const [posts, setPosts] = useState<Post[] | []>([]);
-    const [totalUsers, setTotalUsers] = useState<number>(0);
-    const [totalPosts, setTotalPosts] = useState<number>(0);
-    const [totalComments, setTotalComments] = useState<number>(0);
-    const [lastMonthUsers, setLastMonthUsers] = useState<number>(0);
-    const [lastMonthPosts, setLastMonthPosts] = useState<number>(0);
-    const [lastMonthComments, setLastMonthComments] = useState<number>(0);
+
+    const { data: usersData, isLoading } = useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            try {
+                const { data } = await Axios(`/user/getusers?limit=5`);
+                if (currentUser?.isAdmin) {
+                    return data.data;
+                }
+            } catch (error) {
+                const err = await handleAxiosError(error);
+                console.log(err);
+            }
+        },
+    });
+
+    const { data: postsData } = useQuery({
+        queryKey: ['posts'],
+        queryFn: async () => {
+            try {
+                const { data } = await Axios(`/post/getposts?limit=5`);
+                if (currentUser?.isAdmin) {
+                    return data.data;
+                }
+            } catch (error) {
+                const err = await handleAxiosError(error);
+                console.log(err);
+            }
+        },
+    });
+
+    const { data: commentsData } = useQuery({
+        queryKey: ['comments'],
+        queryFn: async () => {
+            try {
+                const { data } = await Axios(`/comment/getAllComments?limit=5`);
+                if (currentUser?.isAdmin) {
+                    return data.data;
+                }
+            } catch (error) {
+                const err = await handleAxiosError(error);
+                console.log(err);
+            }
+        },
+    });
 
     useEffect(() => {
-        setLoading(true);
+        // setLoading(true);
         if (currentUser?.isAdmin) {
-            (async () => {
-                try {
-                    const { data } = await Axios(`/user/getusers?limit=5`);
-                    setUsers(data.data.users);
-                    setTotalUsers(data.data.totalUsers);
-                    setLastMonthUsers(data.data.lastMonthUsers);
-                } catch (error) {
-                    const err = await handleAxiosError(error);
-                    console.log(err);
-                }
-            })();
-            (async () => {
-                try {
-                    const { data } = await Axios(`/post/getposts?limit=5`);
-                    setPosts(data.data.posts);
-                    setTotalPosts(data.data.totalPosts);
-                    setLastMonthPosts(data.data.lastMonthPosts);
-                } catch (error) {
-                    const err = await handleAxiosError(error);
-                    console.log(err);
-                }
-            })();
-            (async () => {
-                try {
-                    const { data } = await Axios(`/comment/getAllComments?limit=5`);
-                    setComments(data.data.comments);
-                    setTotalComments(data.data.totalComments);
-                    setLastMonthComments(data.data.lastMonthComments);
-                } catch (error) {
-                    const err = await handleAxiosError(error);
-                    console.log(err);
-                }
-            })();
-            setLoading(false);
+            // (async () => {
+            //     try {
+            //         const { data } = await Axios(`/user/getusers?limit=5`);
+            //         setUsers(data.data.users);
+            //         setTotalUsers(data.data.totalUsers);
+            //         setLastMonthUsers(data.data.lastMonthUsers);
+            //     } catch (error) {
+            //         const err = await handleAxiosError(error);
+            //         console.log(err);
+            //     }
+            // })();
+            // (async () => {
+            //     try {
+            //         const { data } = await Axios(`/post/getposts?limit=5`);
+            //         setPosts(data.data.posts);
+            //         setTotalPosts(data.data.totalPosts);
+            //         setLastMonthPosts(data.data.lastMonthPosts);
+            //     } catch (error) {
+            //         const err = await handleAxiosError(error);
+            //         console.log(err);
+            //     }
+            // })();
+            // (async () => {
+            //     try {
+            //         const { data } = await Axios(`/comment/getAllComments?limit=5`);
+            //         setComments(data.data.comments);
+            //         setTotalComments(data.data.totalComments);
+            //         setLastMonthComments(data.data.lastMonthComments);
+            //     } catch (error) {
+            //         const err = await handleAxiosError(error);
+            //         console.log(err);
+            //     }
+            // })();
+            // setLoading(false);
         }
     }, [currentUser]);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className='grid w-full min-h-screen place-content-center'>
                 <Spinner size={'xl'} />
@@ -77,14 +113,18 @@ const DashBoardComp = () => {
                     <div className='flex justify-between'>
                         <div className=''>
                             <h3 className='text-gray-500 uppercase text-md'>Total Users</h3>
-                            <p className='text-2xl'>{totalUsers}</p>
+                            <p className='text-2xl'>{usersData?.totalUsers}</p>
                         </div>
                         <HiOutlineUserGroup className='p-3 text-5xl text-white bg-teal-600 rounded-full shadow-lg' />
                     </div>
                     <div className='flex gap-2 text-sm'>
-                        <span className={`flex items-center ${lastMonthUsers ? 'text-green-500' : 'text-red-500'}`}>
-                            {lastMonthUsers > 0 && <HiArrowNarrowUp />}
-                            {lastMonthUsers}
+                        <span
+                            className={`flex items-center ${
+                                usersData?.lastMonthUsers ? 'text-green-500' : 'text-red-500'
+                            }`}
+                        >
+                            {usersData?.lastMonthUsers > 0 && <HiArrowNarrowUp />}
+                            {usersData?.lastMonthUsers}
                         </span>
                         <div className='text-gray-500'>Last month</div>
                     </div>
@@ -93,14 +133,18 @@ const DashBoardComp = () => {
                     <div className='flex justify-between'>
                         <div className=''>
                             <h3 className='text-gray-500 uppercase text-md'>Total Comments</h3>
-                            <p className='text-2xl'>{totalComments}</p>
+                            <p className='text-2xl'>{commentsData?.totalComments}</p>
                         </div>
                         <HiAnnotation className='p-3 text-5xl text-white bg-indigo-600 rounded-full shadow-lg' />
                     </div>
                     <div className='flex gap-2 text-sm'>
-                        <span className={`flex items-center ${lastMonthUsers ? 'text-green-500' : 'text-red-500'}`}>
-                            {lastMonthUsers > 0 && <HiArrowNarrowUp />}
-                            {lastMonthComments}
+                        <span
+                            className={`flex items-center ${
+                                commentsData?.lastMonthComments ? 'text-green-500' : 'text-red-500'
+                            }`}
+                        >
+                            {commentsData?.lastMonthComments > 0 && <HiArrowNarrowUp />}
+                            {commentsData?.lastMonthComments}
                         </span>
                         <div className='text-gray-500'>Last month</div>
                     </div>
@@ -109,14 +153,18 @@ const DashBoardComp = () => {
                     <div className='flex justify-between'>
                         <div className=''>
                             <h3 className='text-gray-500 uppercase text-md'>Total Posts</h3>
-                            <p className='text-2xl'>{totalPosts}</p>
+                            <p className='text-2xl'>{postsData?.totalPosts}</p>
                         </div>
                         <HiDocumentText className='p-3 text-5xl text-white rounded-full shadow-lg bg-lime-600' />
                     </div>
                     <div className='flex gap-2 text-sm'>
-                        <span className={`flex items-center ${lastMonthUsers ? 'text-green-500' : 'text-red-500'}`}>
-                            {lastMonthUsers > 0 && <HiArrowNarrowUp />}
-                            {lastMonthPosts}
+                        <span
+                            className={`flex items-center ${
+                                postsData?.lastMonthPosts ? 'text-green-500' : 'text-red-500'
+                            }`}
+                        >
+                            {postsData?.lastMonthPosts > 0 && <HiArrowNarrowUp />}
+                            {postsData?.lastMonthPosts}
                         </span>
                         <div className='text-gray-500'>Last month</div>
                     </div>
@@ -135,8 +183,8 @@ const DashBoardComp = () => {
                             <Table.HeadCell>User image</Table.HeadCell>
                             <Table.HeadCell>Username</Table.HeadCell>
                         </Table.Head>
-                        {users &&
-                            users.map((user) => (
+                        {usersData &&
+                            usersData.users.map((user: UserType) => (
                                 <Table.Body key={user._id} className='divide-y'>
                                     <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                                         <Table.Cell>
@@ -164,8 +212,8 @@ const DashBoardComp = () => {
                             <Table.HeadCell>Comment content</Table.HeadCell>
                             <Table.HeadCell>Likes</Table.HeadCell>
                         </Table.Head>
-                        {comments &&
-                            comments.map((comment) => (
+                        {commentsData &&
+                            commentsData.comments.map((comment: CommentType) => (
                                 <Table.Body key={comment._id} className='divide-y'>
                                     <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                                         <Table.Cell className='w-96'>
@@ -191,8 +239,8 @@ const DashBoardComp = () => {
                             <Table.HeadCell>Category</Table.HeadCell>
                         </Table.Head>
                         <Table.Body className='divide-y'>
-                            {posts &&
-                                posts.map((post) => (
+                            {postsData &&
+                                postsData.posts.map((post: Post) => (
                                     <Table.Row
                                         key={post._id}
                                         className=' bg-white dark:border-gray-700 dark:bg-gray-800 [&>*]:text-center'

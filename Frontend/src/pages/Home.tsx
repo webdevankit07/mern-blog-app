@@ -7,7 +7,7 @@ const Home = () => {
 
     return (
         <div>
-            <div className='flex flex-col max-w-6xl gap-6 px-3 mx-auto p-28 '>
+            <div className='flex flex-col max-w-6xl gap-6 px-3 py-10 mx-auto md:py-28 '>
                 <h1 className='text-3xl font-bold lg:text-6xl'>
                     Welcome {currentUser ? currentUser?.fullName : 'to Web Universe'}
                 </h1>

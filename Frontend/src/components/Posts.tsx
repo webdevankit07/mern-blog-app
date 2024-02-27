@@ -1,9 +1,9 @@
 import { Post } from '../pages/PostPage';
 import { Axios } from '../config/api';
 import { handleAxiosError } from '../utils/utils';
-import { Spinner } from 'flowbite-react';
 import PostCard from './PostCard';
 import { Link } from 'react-router-dom';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 // swiper...*:
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -11,6 +11,7 @@ import { Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import PostCardSkeleton from './PostCardSkeleton';
 
 type PropsType = {
     category: string;
@@ -22,9 +23,8 @@ const Posts = ({ category, title }: PropsType) => {
         queryKey: [category],
         queryFn: async () => {
             try {
-                const { data } = await Axios(`/post/getPosts?category=${category}`);
-                console.log({ category, posts: data.data.posts });
-                return data.data.posts.reverse();
+                const { data } = await Axios(`/post/getallposts?category=${category}`);
+                return data.data.posts.reverse().slice(0, 9);
             } catch (error) {
                 const err = await handleAxiosError(error);
                 console.log(err);
@@ -38,8 +38,17 @@ const Posts = ({ category, title }: PropsType) => {
         <>
             <div className='flex flex-col max-w-6xl gap-8 p-1 mx-auto'>
                 {isLoading ? (
-                    <div className='grid place-content-center'>
-                        <Spinner size={'xl'} />
+                    <div className='flex flex-col gap-6 '>
+                        <div className='flex items-center justify-between px-3'>
+                            <h2 className='text-2xl font-semibold'>
+                                {title}
+                                <hr className='w-full mt-2' />
+                            </h2>
+                            <Link to={'/search'} className='text-lg text-center text-teal-500 hover:underline'>
+                                View all posts
+                            </Link>
+                        </div>
+                        <PostCardSkeleton cards={3} />
                     </div>
                 ) : (
                     posts &&

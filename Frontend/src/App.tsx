@@ -20,6 +20,7 @@ import { Axios } from './config/api';
 import { handleAxiosError } from './utils/utils';
 import { useAppDispatch } from './store/storeHooks';
 import { setUserState } from './store/features/user/userSlice';
+import { SkeletonTheme } from 'react-loading-skeleton';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -40,28 +41,30 @@ const App = () => {
     }, [dispatch]);
 
     return (
-        <Router>
-            <Routes>
-                <Route element={<Layout />}>
-                    <Route element={<PrivateRoute />}>
-                        <Route path='/dashboard' element={<Dashboard />} />
+        <SkeletonTheme baseColor='#313131' highlightColor='#525252'>
+            <Router>
+                <Routes>
+                    <Route element={<Layout />}>
+                        <Route element={<PrivateRoute />}>
+                            <Route path='/dashboard' element={<Dashboard />} />
+                        </Route>
+                        <Route element={<PrivateAuthRoute />}>
+                            <Route path='/sign-in' element={<Signin />} />
+                            <Route path='/sign-up' element={<Signup />} />
+                        </Route>
+                        <Route element={<OnlyAdminPrivateRoute />}>
+                            <Route path='/create-post' element={<CreatePost />} />
+                            <Route path='/update-post/:postId' element={<UpdatePost />} />
+                        </Route>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/about' element={<About />} />
+                        <Route path='/post/:postSlug' element={<PostPage />} />
+                        <Route path='/search' element={<Search />} />
+                        <Route path='*' element={<Error />} />
                     </Route>
-                    <Route element={<PrivateAuthRoute />}>
-                        <Route path='/sign-in' element={<Signin />} />
-                        <Route path='/sign-up' element={<Signup />} />
-                    </Route>
-                    <Route element={<OnlyAdminPrivateRoute />}>
-                        <Route path='/create-post' element={<CreatePost />} />
-                        <Route path='/update-post/:postId' element={<UpdatePost />} />
-                    </Route>
-                    <Route path='/' element={<Home />} />
-                    <Route path='/about' element={<About />} />
-                    <Route path='/post/:postSlug' element={<PostPage />} />
-                    <Route path='/search' element={<Search />} />
-                    <Route path='*' element={<Error />} />
-                </Route>
-            </Routes>
-        </Router>
+                </Routes>
+            </Router>
+        </SkeletonTheme>
     );
 };
 
