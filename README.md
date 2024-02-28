@@ -1,6 +1,6 @@
 
 ## 🚀 About Me
-I'm a full stack developer with Reactjs, TypeScript, Nodejs, MongoDB
+Hi there I'm ANKIT YADAV a full stack developer with Reactjs, TypeScript, Nodejs, MongoDB
 
 
 # Web Universe - MERN Blog WebApp
