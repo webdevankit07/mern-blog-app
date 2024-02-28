@@ -9,6 +9,8 @@ Hi there I'm ANKIT YADAV a full stack developer with Reactjs, TypeScript, Nodejs
 
 - Website Link :- https://web-universe.vercel.app/
 
+- Admin Account :- [Email : - admin@gmail.com, Password:- admin@xyz] 
+
 ## Tech Stack
 
 **Client:** React, TypeScript, Redux, TailwindCSS
