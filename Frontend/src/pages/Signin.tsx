@@ -109,15 +109,13 @@ const Signin = () => {
                             />
                             <p className='h-2 px-3 pt-1 pb-3 text-sm text-red-500'>{errors.email?.message}</p>
                         </div>
-                        <div>
+                        <div className='relative'>
                             <Label value='Your password' htmlFor='password' />
                             <TextInput
                                 type={isPasswordVisible ? 'text' : 'password'}
                                 placeholder='**********'
                                 id='password'
                                 autoComplete='off'
-                                rightIcon={isPasswordVisible ? BsFillEyeFill : BsFillEyeSlashFill}
-                                onClick={() => setIsPasswordVisible((prev) => !prev)}
                                 {...register('password', {
                                     required: 'password is required',
                                     validate: {
@@ -127,6 +125,12 @@ const Signin = () => {
                                     },
                                 })}
                             />
+                            <span
+                                className='absolute p-1.5 transition-all duration-200 ease-in-out rounded-full cursor-pointer right-2 top-8 hover:bg-blue-900 hover:text-white'
+                                onClick={() => setIsPasswordVisible((prev) => !prev)}
+                            >
+                                {isPasswordVisible ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                            </span>
                             <p className='h-2 px-3 pt-1 pb-3 text-sm text-red-500'>{errors.password?.message}</p>
                         </div>
                         <Button gradientDuoTone={'purpleToPink'} type='submit' disabled={loading}>

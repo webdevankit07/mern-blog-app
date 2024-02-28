@@ -53,7 +53,6 @@ const Signup = () => {
                     <div className='relative flex flex-col  max-h-[600px] md:max-w-[380px] lg:max-w-[400px] items-center overflow-hidden rounded-md cursor-pointer group border'>
                         <img
                             src={'/image.jpg'}
-                            alt=''
                             className='group-hover:scale-[1.05] transition-all duration-300 ease-in-out h-[700px] w-full'
                         />
                         <div className='absolute hidden w-full h-full transition-all duration-300 ease-in-out bg-black opacity-50 group-hover:block'></div>
@@ -136,15 +135,13 @@ const Signup = () => {
                             />
                             <p className='h-2 px-3 pt-1 pb-3 text-sm text-red-500'>{errors.email?.message}</p>
                         </div>
-                        <div>
+                        <div className='relative'>
                             <Label value='Your password' htmlFor='password' />
                             <TextInput
                                 type={isPasswordVisible ? 'text' : 'password'}
                                 placeholder='Password'
                                 id='password'
                                 autoComplete='off'
-                                rightIcon={isPasswordVisible ? BsFillEyeFill : BsFillEyeSlashFill}
-                                onClick={() => setIsPasswordVisible((prev) => !prev)}
                                 {...register('password', {
                                     required: 'password is required',
                                     validate: {
@@ -154,6 +151,12 @@ const Signup = () => {
                                     },
                                 })}
                             />
+                            <span
+                                className='absolute p-1.5 transition-all duration-200 ease-in-out rounded-full cursor-pointer right-2 top-8 hover:bg-blue-900 hover:text-white'
+                                onClick={() => setIsPasswordVisible((prev) => !prev)}
+                            >
+                                {isPasswordVisible ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                            </span>
                             <p className='h-2 px-3 pt-1 pb-3 text-sm text-red-500'>{errors.password?.message}</p>
                         </div>
                         <div>

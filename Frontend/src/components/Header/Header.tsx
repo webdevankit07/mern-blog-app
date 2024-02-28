@@ -33,6 +33,7 @@ const Header = () => {
         try {
             await Axios.post(`/user/logout/${currentUser?._id}`);
             dispatch(signoutUserSuccess());
+            navigate('/');
         } catch (error) {
             const err = await handleAxiosError(error);
             dispatch(deleteUserFailure(err));
