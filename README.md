@@ -81,6 +81,51 @@ Start the Backend server
   npm run dev
 ```
 
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+Frontend ENV:
+
+`VITE_API_BASE_URL`
+
+`VITE_STRIPE_PUB_KEY`
+
+`VITE_FIREBASE_API_KEY`
+
+`VITE_FIREBASE_AUTH_DOMAIN`
+
+`VITE_FIREBASE_PROJECT_ID`
+
+`VITE_FIREBASE_STORAGE_BUCKET`
+
+`VITE_FIREBASE_MESSAGING_SENDER_ID`
+
+`VITE_FIREBASE_APP_ID`
+
+Backend ENV:
+
+`NODE_ENV`
+
+`FRONDEND_LINK`
+
+`DATABASE_URL `
+
+`ACCESS_TOKEN_SECRET`
+
+`ACCESS_TOKEN_EXPIRY`
+
+`REFRESH_TOKEN_SECRET`
+
+`REFRESH_TOKEN_EXPIRY`
+
+`CLOUDINARY_CLOUD_NAME` 
+
+`CLOUDINARY_API_KEY` 
+
+`CLOUDINARY_API_SECRET` 
+
+
 
 ## 🔗 Social Media Links
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/webdevankit/)
